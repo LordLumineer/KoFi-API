@@ -1,22 +1,15 @@
 from datetime import datetime, timedelta
-from fastapi import HTTPException
-from sqlalchemy import MetaData, create_engine, select
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from sqlalchemy.orm import Session
+from alembic import command
+from alembic.config import Config
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from app import models
 from app.config import settings
 
-DATABASE_URL = "sqlite:///./KoFi.db"
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(url=settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-class Base(DeclarativeBase):
-    """
-    The base class for all SQLAlchemy models.
-    """
 
 
 def get_db():
@@ -67,3 +60,7 @@ def remove_expired_transactions():
             ).delete()
     finally:
         db.close()
+
+def run_migrations():
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head") 

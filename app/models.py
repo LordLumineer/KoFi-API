@@ -4,7 +4,7 @@ from sqlalchemy import PickleType
 from sqlalchemy.ext.mutable import MutableList, MutableDict
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.db import Base
+from app.base import Base
 from app.config import settings
 
 

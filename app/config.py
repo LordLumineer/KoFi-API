@@ -1,3 +1,4 @@
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,6 +8,8 @@ class Settings(BaseSettings):
     )
     PROJECT_NAME: str = "Ko-fi API"
     DATA_RETENTION_DAYS: int = 10
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", "sqlite:///./KoFi.db")
 
 
 settings = Settings()  # type: ignore

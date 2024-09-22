@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from app import models
 from app import db as database
-from app.db import remove_expired_transactions
+from app.db import remove_expired_transactions, run_migrations
 from app.config import settings
 
 models.Base.metadata.create_all(bind=database.engine)
@@ -28,6 +28,9 @@ app = FastAPI()
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # pylint: disable=unused-argument, redefined-outer-name
     print("Starting up...")
+    # Alembic
+    run_migrations()
+    # 
     scheduler = BackgroundScheduler()
     scheduler.add_job(remove_expired_transactions, 'cron', hour=0, minute=0)
     scheduler.start()
