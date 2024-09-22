@@ -1,0 +1,25 @@
+{
+    "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v10/terminal-keeper.json",
+    "theme": "tribe",
+    "active": "default",
+    "activateOnStartup": true,
+    "keepExistingTerminals": false,
+    "sessions": {
+        "default": [
+            [
+                {
+                    "name": ".venv API Server",
+                    "autoExecuteCommands": true,
+                    "icon": "server",
+                    "color": "terminal.ansiRed",
+                    "cwd": "./",
+                    "commands": [
+                        "& '.venv/Scripts/Activate.ps1'",
+                        "cd app"
+                    ],
+                    "joinOperator": ";"
+                }
+            ]
+        ]
+    }
+}
