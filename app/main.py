@@ -1,10 +1,11 @@
 
 from datetime import datetime, timezone
 import json
+import os
 
 import requests
-from fastapi import FastAPI, Depends, File, Form, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi import BackgroundTasks, FastAPI, Depends, File, Form, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.exceptions import HTTPException
 from contextlib import asynccontextmanager
 
@@ -17,7 +18,7 @@ from sqlalchemy.orm import Session
 
 from app import models
 from app import db as database
-from app.db import remove_expired_transactions, run_migrations
+from app.db import get_db, handle_database_import, remove_expired_transactions, run_migrations, export_db
 from app.config import settings
 
 models.Base.metadata.create_all(bind=database.engine)
@@ -189,7 +190,8 @@ def get_transactions_total(
     except AssertionError as e:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid 'method' parameter ({method}). Expected 'total', 'recent', or 'latest'."
+            detail=f"Invalid 'method' parameter ({
+                method}). Expected 'total', 'recent', or 'latest'."
         ) from e
 
     user = db.query(models.KofiUser).filter(
@@ -452,48 +454,95 @@ def read_user_db(ADMIN_SECRET_KEY, db: Session = Depends(database.get_db)):
 
 # ----- DB -----
 
+# @app.get("/db/export", response_class=FileResponse)
+# async def db_export(ADMIN_SECRET_KEY: str, background_tasks: BackgroundTasks):
+#     """
+#     Exports the entire database to a SQLite file.
+
+#     This endpoint can be used to export the entire database to a SQLite file.
+#     The file will be deleted immediately after it is sent to the client.
+
+#     Raises:
+#         HTTPException: If the currently authenticated user does not have the "admin" role.
+
+#     Returns:
+#         FileResponse: The database file.
+#     """
+#     if ADMIN_SECRET_KEY != settings.ADMIN_SECRET_KEY:
+#         raise HTTPException(
+#             status_code=401, detail="Invalid admin secret key")
+
+#     def remove_file(file_path: str):
+#         """Background task to delete the file after sending it."""
+#         if os.path.exists(file_path):
+#             os.remove(file_path)
+#     file_path = await export_db()
+#     background_tasks.add_task(remove_file, file_path)
+#     return FileResponse(file_path, filename=f'{settings.PROJECT_NAME}_export_{int(datetime.now(timezone.utc).timestamp())}.db')
 
 @app.get("/db/export")
-def export_db(ADMIN_SECRET_KEY, db: Session = Depends(database.get_db)):
+async def db_export(ADMIN_SECRET_KEY: str, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    if ADMIN_SECRET_KEY != settings.ADMIN_SECRET_KEY:
+        raise HTTPException(
+            status_code=401, detail="Invalid admin secret key")
+    try:
+        def remove_file(file_path: str):
+            """Background task to delete the file after sending it."""
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        file_path = await export_db(db)
+        background_tasks.add_task(remove_file, file_path)
+        return FileResponse(file_path, filename=f'{settings.PROJECT_NAME}_export_{int(datetime.now(timezone.utc).timestamp())}.db', media_type="application/octet-stream")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to export database: {str(e)}") from e
+
+@app.post("db/recover")
+async def db_recover(
+    ADMIN_SECRET_KEY: str,
+    file: UploadFile = File(...),
+):
     """
-    Exports the entire database as a JSON file.
-
-    Args:
-        ADMIN_SECRET_KEY (str): The admin secret key.
-
-    Returns:
-        A JSON file containing all data in the database.
-
-    Raises:
-        HTTPException: 401 if the admin secret key is invalid.
-        HTTPException: 500 if the export is not implemented.
+    Import a SQLite database file into the running database based on the mode ('recover' or 'import').
     """
     if ADMIN_SECRET_KEY != settings.ADMIN_SECRET_KEY:
         raise HTTPException(
             status_code=401, detail="Invalid admin secret key")
 
-    return HTTPException(status_code=500, detail="Not implemented")
+    # Save the uploaded file temporarily
+    uploaded_db_path = f"./temp_{file.filename}"
+    with open(uploaded_db_path, "wb") as buffer:
+        buffer.write(await file.read())
+
+    # Call function to handle database import logic
+    await handle_database_import(uploaded_db_path, "recover")
+
+    return {"message": f"Database recovered from {file.filename}"}
 
 
-@app.get("/db/recover")
-async def recover_db(ADMIN_SECRET_KEY, file: UploadFile = File(...), db: Session = Depends(database.get_db)):
+@app.post("db/import")
+async def db_import(
+    ADMIN_SECRET_KEY: str,
+    file: UploadFile = File(...),
+):
+    """
+    Import a SQLite database file into the running database based on the mode ('recover' or 'import').
+    """
     if ADMIN_SECRET_KEY != settings.ADMIN_SECRET_KEY:
         raise HTTPException(
             status_code=401, detail="Invalid admin secret key")
 
-    return HTTPException(status_code=500, detail="Not implemented")
+    # Save the uploaded file temporarily
+    uploaded_db_path = f"./temp_{file.filename}"
+    with open(uploaded_db_path, "wb") as buffer:
+        buffer.write(await file.read())
 
+    # Call function to handle database import logic
+    await handle_database_import(uploaded_db_path, "import")
 
-@app.get("/db/import")
-def import_db(ADMIN_SECRET_KEY, db: Session = Depends(database.get_db)):
-    if ADMIN_SECRET_KEY != settings.ADMIN_SECRET_KEY:
-        raise HTTPException(
-            status_code=401, detail="Invalid admin secret key")
-
-    return HTTPException(status_code=500, detail="Not implemented")
-
+    return {"message": f"Database imported from {file.filename}"}
 
 # ----- UTILITY -----
+
 
 def currency_converter(amount: float, from_currency: str, to_currency: str) -> float:
     # API endpoint to get exchange rates
