@@ -1,4 +1,5 @@
-import os
+from cgitb import reset
+import logging
 import warnings
 from typing import Literal, Self
 from pydantic import model_validator
@@ -35,3 +36,15 @@ class Settings(BaseSettings):
 
 
 settings = Settings()  # type: ignore
+
+
+logger = logging.getLogger("uvicorn")
+if not logger:
+    logging.basicConfig(
+            level=logging.INFO,
+            format="%(levelname)s:     %(message)s",
+            handlers=[logging.StreamHandler()]  # Output to stdout
+        )
+    logger = logging.getLogger(__name__)
+
+

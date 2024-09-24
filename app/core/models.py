@@ -4,8 +4,8 @@ from sqlalchemy import PickleType
 from sqlalchemy.ext.mutable import MutableList, MutableDict
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.base import Base
-from app.config import settings
+from app.core.base import Base
+from app.core.config import settings
 
 
 class KofiTransactionSchema(BaseModel):
@@ -60,7 +60,7 @@ class KofiTransaction(Base):
     shipping: Mapped[PickleType | None] = mapped_column(
         MutableDict.as_mutable(PickleType))
 
-class KofiUsreSchema(BaseModel):
+class KofiUserSchema(BaseModel):
     verification_token: str
     data_retention_days: int
     latest_request_at: str

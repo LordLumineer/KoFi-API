@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
-from math import e
+import logging
 import os
-import re
+from datetime import datetime, timedelta
 import shutil
 from alembic import command
 from alembic.config import Config
@@ -9,8 +8,8 @@ from fastapi import HTTPException
 from sqlalchemy import MetaData, Table, create_engine, inspect, select, text
 from sqlalchemy.orm import Session, sessionmaker
 
-from app import models
-from app.config import settings
+from app.core.models import KofiTransaction, KofiUser
+from app.core.config import settings, logger
 
 
 engine = create_engine(url=settings.DATABASE_URL)
@@ -18,24 +17,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db():
-    """
-    Returns a context manager that provides a database session.
-
-    This function creates a new database session using the `SessionLocal` object, 
-    which is a session factory created by the `sessionmaker` function. 
-    The session is yielded in the context manager, allowing the caller to use it to interact with the database.
-
-    The session is automatically closed in the `finally` block of the context manager, 
-    ensuring that it is always properly closed, even if an exception occurs.
-
-    Returns:
-        A context manager that provides a database session.
-
-    Example:
-        with get_db() as db:
-            # Use the db session to interact with the database
-            # ...
-    """
     db = SessionLocal()
     try:
         yield db
@@ -44,42 +25,27 @@ def get_db():
 
 
 def remove_expired_transactions():
-    """
-    Removes expired transactions from the database.
-
-    Args:
-        db (Session): The database session.
-        retention_months (int): The number of months to retain transactions for.
-
-    Returns:
-        None
-    """
     db_generator = get_db()
     db = next(db_generator)
     try:
-        users = db.query(models.KofiUser).all()
+        users = db.query(KofiUser).all()
         for user in users:
             latest_day = datetime.now() - timedelta(days=user.data_retention_days)
-            db.get(models.KofiTransaction).filter(
-                models.KofiTransaction.timestamp < latest_day,
+            db.get(KofiTransaction).filter(
+                KofiTransaction.timestamp < latest_day,
             ).delete()
     finally:
         db.close()
 
-
 def run_migrations():
     alembic_cfg = Config("alembic.ini")
+    logger.info("Running Alembic migrations...")
     command.upgrade(alembic_cfg, "head")
+    logger.disabled = False
+    logger.info("Alembic migrations completed.")
 
 
 async def handle_database_import(uploaded_db_path: str, mode: str):
-    """
-    Compares the uploaded database with the current one and imports data based on the mode.
-
-    Args:
-        uploaded_db_path (str): Path to the uploaded SQLite file.
-        mode (str): Either 'recover' or 'import'.
-    """
     # Connect to the uploaded SQLite database
     upload_engine = create_engine(f"sqlite:///{uploaded_db_path}")
     upload_conn = upload_engine.connect()
@@ -103,8 +69,8 @@ async def handle_database_import(uploaded_db_path: str, mode: str):
             # Compare columns in both databases
             columns_existing = [col['name']
                                 for col in inspector.get_columns(table_name)]
-            columns_uploaded = [col['name']
-                                for col in upload_inspector.get_columns(table_name)]
+            # columns_uploaded = [col['name']
+            #                     for col in upload_inspector.get_columns(table_name)]
 
             # Create a SQLAlchemy Table object for both DBs
             table_existing = Table(table_name, meta, autoload_with=engine)
@@ -117,10 +83,10 @@ async def handle_database_import(uploaded_db_path: str, mode: str):
             stmt_existing = select(table_existing)
             stmt_uploaded = select(table_uploaded)
 
-            rows_existing = {tuple([row[key] for key in primary_keys])
-                                   : row for row in session.execute(stmt_existing).mappings()}
-            rows_uploaded = {tuple([row[key] for key in primary_keys])
-                                   : row for row in upload_conn.execute(stmt_uploaded).mappings()}
+            rows_existing = {tuple([row[key] for key in primary_keys]): 
+                row for row in session.execute(stmt_existing).mappings()}
+            rows_uploaded = {tuple([row[key] for key in primary_keys]): 
+                row for row in upload_conn.execute(stmt_uploaded).mappings()}
 
             # Add or update rows based on mode
             for pk, row_uploaded in rows_uploaded.items():
@@ -158,6 +124,7 @@ async def handle_database_import(uploaded_db_path: str, mode: str):
 
     return
 
+
 async def export_db(db: Session):
     EXPORT_PATH = "./output.db"
     if "sqlite" in str(engine.url):
@@ -165,9 +132,10 @@ async def export_db(db: Session):
         ENGINE_DB_PATH = engine.url.database
         if os.path.exists(ENGINE_DB_PATH):
             shutil.copyfile(ENGINE_DB_PATH, EXPORT_PATH)
-            #return FileResponse(EXPORT_DB, filename="my_database.db", media_type="application/octet-stream")
+            # return FileResponse(EXPORT_DB, filename="my_database.db", media_type="application/octet-stream")
         else:
-            raise HTTPException(status_code=404, detail="SQLite database file not found.")
+            raise HTTPException(
+                status_code=404, detail="SQLite database file not found.")
     else:
         # For non-SQLite databases, dump the SQL statements
         metadata = MetaData()
@@ -186,6 +154,7 @@ async def export_db(db: Session):
                     columns = ", ".join([col for col in result.keys()])
                     for row in rows:
                         values = ", ".join([f"'{str(val)}'" for val in row])
-                        insert_stmt = f"INSERT INTO {table.name} ({columns}) VALUES ({values});\n"
+                        insert_stmt = f"INSERT INTO {
+                            table.name} ({columns}) VALUES ({values});\n"
                         file.write(insert_stmt)
     return EXPORT_PATH
