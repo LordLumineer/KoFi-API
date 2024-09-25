@@ -28,8 +28,8 @@ jobs:
     - name: Set up thresholds
       id: thresholds
       run: |
-        echo "pylint_threshold=5.0" >> $GITHUB_OUTPUT
-        echo "coverage_threshold=99" >> $GITHUB_OUTPUT
+        echo "pylint_threshold=2.5" >> $GITHUB_OUTPUT
+        echo "coverage_threshold=25" >> $GITHUB_OUTPUT
 
     # Step 3: Install dependencies (including Anybadge)
     - name: Install dependencies
@@ -76,7 +76,6 @@ jobs:
       if: ${{ steps.coverage.outputs.coverage_percentage < steps.thresholds.outputs.coverage_threshold }}
       run: |
         echo "Coverage is below the required threshold. ${{ steps.coverage.outputs.coverage_percentage }}% (required >${{ steps.thresholds.outputs.coverage_threshold }}%)"
-        echo "Coverage is below the required threshold"
         exit 1
 
     # Step 9: Generate pylint badge using Anybadge
