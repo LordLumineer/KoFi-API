@@ -49,22 +49,14 @@ jobs:
       run: |
         echo "Pylint score is below the required threshold. ${{ steps.pylint.outputs.pylint_score }} (required >5.0)"
         exit 1
-        
 
-    # Step 6: Generate pylint badge using Anybadge
-    - name: Generate pylint badge
-      run: |
-        rm img/pylint_badge.svg
-        cd app
-        anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=../img/pylint_badge.svg pylint
-
-    # Step 7: Run coverage and generate report
+    # Step 6: Run coverage and generate report
     - name: Run tests with coverage
       run: |
         coverage run -m pytest
         coverage report
 
-    # Step 8: Extract coverage percentage
+    # Step 7: Extract coverage percentage
     - name: Extract coverage percentage
       id: coverage
       run: |
@@ -72,13 +64,20 @@ jobs:
         echo "Coverage percentage is: $coverage_percentage"
         echo "coverage_percentage=$coverage_percentage" >> $GITHUB_OUTPUT
 
-    # Step 9: Fail if coverage is below threshold
+    # Step 8: Fail if coverage is below threshold
     - name: Check coverage score
       if: ${{ steps.coverage.outputs.coverage_percentage < '99' }}
       run: |
-        echo "Coverage is below the required threshold. ${{ steps.pylint.outputs.pylint_score }} (required >99%)"
+        echo "Coverage is below the required threshold. ${{ steps.coverage.outputs.coverage_percentage }} (required >99%)"
         echo "Coverage is below the required threshold"
         exit 1
+
+    # Step 9: Generate pylint badge using Anybadge
+    - name: Generate pylint badge
+      run: |
+        rm img/pylint_badge.svg
+        cd app
+        anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=../img/pylint_badge.svg pylint
 
     # Step 10: Generate coverage badge using Anybadge
     - name: Generate coverage badge
