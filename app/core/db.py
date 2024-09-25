@@ -37,11 +37,13 @@ def remove_expired_transactions():
     finally:
         db.close()
 
+
 def run_migrations():
     alembic_cfg = Config("alembic.ini")
     logger.info("Running Alembic migrations...")
     command.upgrade(alembic_cfg, "head")
     logger.disabled = False
+    logging.getLogger("uvicorn.access").disabled = False
     logger.info("Alembic migrations completed.")
 
 
@@ -83,10 +85,10 @@ async def handle_database_import(uploaded_db_path: str, mode: str):
             stmt_existing = select(table_existing)
             stmt_uploaded = select(table_uploaded)
 
-            rows_existing = {tuple([row[key] for key in primary_keys]): 
-                row for row in session.execute(stmt_existing).mappings()}
-            rows_uploaded = {tuple([row[key] for key in primary_keys]): 
-                row for row in upload_conn.execute(stmt_uploaded).mappings()}
+            rows_existing = {tuple([row[key] for key in primary_keys]):
+                             row for row in session.execute(stmt_existing).mappings()}
+            rows_uploaded = {tuple([row[key] for key in primary_keys]):
+                             row for row in upload_conn.execute(stmt_uploaded).mappings()}
 
             # Add or update rows based on mode
             for pk, row_uploaded in rows_uploaded.items():

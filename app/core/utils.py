@@ -1,4 +1,4 @@
-import requests
+import httpx
 from fastapi import HTTPException
 
 
@@ -10,13 +10,13 @@ def currency_converter(amount: float, from_currency: str, to_currency: str) -> f
 
     # Send a GET request to the API and check if the request was successful
     try:
-        response = requests.get(endpoint, timeout=10)
+        response = httpx.get(endpoint, timeout=1)
         if not response.status_code == 200:
-            response = requests.get(backup_endpoint, timeout=10)
+            response = httpx.get(backup_endpoint, timeout=5)
             if not response.status_code == 200:
                 raise HTTPException(
                     status_code=500, detail="Failed to retrieve exchange rate")
-    except requests.Timeout as e:
+    except httpx.TimeoutException as e:
         raise HTTPException(
             status_code=500, detail=f"API endpoint timed out. Please try again. \n Error: {e}") from e
 

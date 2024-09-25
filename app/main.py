@@ -1,4 +1,3 @@
-import logging
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
@@ -22,7 +21,7 @@ async def lifespan(app: FastAPI):  # pylint: disable=unused-argument, redefined-
     logger.info("Starting up...")
     # Alembic
     run_migrations()
-    #
+    # Scheduler
     scheduler = BackgroundScheduler()
     scheduler.add_job(remove_expired_transactions, 'cron', hour=0, minute=0)
     scheduler.start()

@@ -1,4 +1,3 @@
-from cgitb import reset
 import logging
 import warnings
 from typing import Literal, Self
@@ -37,7 +36,6 @@ class Settings(BaseSettings):
 
 settings = Settings()  # type: ignore
 
-
 logger = logging.getLogger("uvicorn")
 if not logger:
     logging.basicConfig(
@@ -46,5 +44,3 @@ if not logger:
             handlers=[logging.StreamHandler()]  # Output to stdout
         )
     logger = logging.getLogger(__name__)
-
-
