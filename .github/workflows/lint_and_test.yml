@@ -91,7 +91,7 @@ jobs:
         rm img/coverage_badge.svg
         cd app
         coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
-        anybadge --value=$coverage_percentage --file=../img/coverage_badge.svg coverage
+        anybadge --value=${{ steps.coverage.outputs.coverage_percentage }} --file=../img/coverage_badge.svg coverage
 
     # Step 11: Upload the badges as GitHub artifacts (optional)
     - name: Upload pylint badge
