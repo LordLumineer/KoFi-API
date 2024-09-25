@@ -54,6 +54,7 @@ jobs:
     # Step 6: Generate pylint badge using Anybadge
     - name: Generate pylint badge
       run: |
+        cd app
         anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=../img/pylint_badge.svg pylint
 
     # Step 7: Run coverage with pytest
@@ -67,6 +68,7 @@ jobs:
     # Step 8: Generate coverage badge using Anybadge
     - name: Generate coverage badge
       run: |
+        cd app
         coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
         anybadge --label=Coverage --value=$coverage_percentage --file=../img/coverage_badge.svg --threshold=YOUR_COVERAGE_THRESHOLD
 
