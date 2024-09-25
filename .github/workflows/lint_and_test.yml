@@ -13,26 +13,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout the code from the repository
+    # Step 1: Checkout the code from the repository
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # Set up Python
+    # Step 2: Set up Python
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+        cache: 'pip'
 
-    # Install dependencies
+    # Step 3: Install dependencies (including Anybadge)
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install anybadge
         cd app
         pip install -r requirements.txt
         cd test
         pip install -r requirements.txt
 
-    # Run pylint and calculate score
+    # Step 4: Run pylint and calculate the score
     - name: Run pylint
       id: pylint
       run: |
@@ -41,24 +43,51 @@ jobs:
         echo "Pylint score is: $pylint_score"
         echo "::set-output name=pylint_score::$pylint_score"
       
-    # Fail if pylint score is below threshold
+    # Step 5: Fail if pylint score is below threshold
     - name: Check pylint score
       if: ${{ steps.pylint.outputs.pylint_score < '5.0' }}
       run: |
         echo "Pylint score is below threshold"
         exit 1
+        
 
-    # Run pytest with coverage
+    # Step 6: Generate pylint badge using Anybadge
+    - name: Generate pylint badge
+      run: |
+        anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=../img/pylint_badge.svg pylint
+
+    # Step 7: Run coverage with pytest
     - name: Run tests and coverage
       run: |
         cd app
         coverage run -m pytest
-        coverage json -o coverage.json
+        coverage report
+        coverage xml -o coverage.xml
 
-    # Generate badge
-    # - name: Upload coverage result as badge
-    #   uses: cicirello/jacoco-badge-generator@v2
-    #   with:
-    #     coverage-endpoint-filename: app/coverage.json # Customize this based on output type
-    #     coverage-label: pytest
+    # Step 8: Generate coverage badge using Anybadge
+    - name: Generate coverage badge
+      run: |
+        coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
+        anybadge --label=Coverage --value=$coverage_percentage --file=../img/coverage_badge.svg --threshold=YOUR_COVERAGE_THRESHOLD
 
+    # Step 9: Upload the badges as GitHub artifacts (optional)
+    - name: Upload pylint badge
+      uses: actions/upload-artifact@v3
+      with:
+        name: pylint-badge
+        path: img/pylint_badge.svg
+
+    - name: Upload coverage badge
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-badge
+        path: img/coverage_badge.svg
+
+    # (Optional) Step 10: Commit the badges to the repo if you want them automatically updated
+    - name: Commit badges
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add pylint_badge.svg coverage_badge.svg
+        git commit -m "Update badges"
+        git push

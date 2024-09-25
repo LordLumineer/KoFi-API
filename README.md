@@ -1,6 +1,7 @@
 # KoFi-API
 
-![Pylint Score](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test.yml/badge.svg)
+![Pylint Score](./img/pylint_badge.svg)
+![Coverage](./img/coverage_badge.svg)
 
 ## Useful CMD
 
