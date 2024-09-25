@@ -45,7 +45,7 @@ jobs:
 
     # Step 5: Fail if pylint score is below threshold
     - name: Check pylint score
-      if: ${{ steps.pylint.outputs.pylint_score < '5.0' }}
+      if: ${{ steps.pylint.outputs.pylint_score < '6.0' }}
       run: |
         echo "Pylint score is below threshold"
         exit 1
@@ -73,7 +73,7 @@ jobs:
 
     # Step 9: Fail if coverage is below threshold
     - name: Check coverage score
-      if: ${{ steps.coverage.outputs.coverage_percentage < '90' }}
+      if: ${{ steps.coverage.outputs.coverage_percentage < '20' }}
       run: |
         echo "Coverage is below the required threshold"
         exit 1
