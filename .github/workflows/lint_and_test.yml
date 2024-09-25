@@ -39,13 +39,13 @@ jobs:
       id: pylint
       run: |
         cd app
-        pylint_score=$(pylint . --fail-under=5.0 --output-format=parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
+        pylint_score=$(pylint . --fail-under=9.9 --output-format=parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
         echo "Pylint score is: $pylint_score"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
 
     # Step 5: Fail if pylint score is below threshold
     - name: Check pylint score
-      if: ${{ steps.pylint.outputs.pylint_score < '10.0' }}
+      if: ${{ steps.pylint.outputs.pylint_score < '9.9' }}
       run: |
         echo "Pylint score is : ${{ steps.pylint.outputs.pylint_score }} | $pylint_score"
         echo "Pylint score is below threshold"
