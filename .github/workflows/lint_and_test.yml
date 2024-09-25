@@ -41,8 +41,8 @@ jobs:
         cd app
         pylint_score=$(pylint . --fail-under=5.0 --output-format=parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
         echo "Pylint score is: $pylint_score"
-        echo "::set-output name=pylint_score::$pylint_score"
-      
+        echo "{pylint_score}={$pylint_score}" >> $GITHUB_OUTPUT
+
     # Step 5: Fail if pylint score is below threshold
     - name: Check pylint score
       if: ${{ steps.pylint.outputs.pylint_score < '5.0' }}
@@ -57,35 +57,48 @@ jobs:
         cd app
         anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=../img/pylint_badge.svg pylint
 
-    # Step 7: Run coverage with pytest
-    - name: Run tests and coverage
+    # Step 7: Run coverage and generate report
+    - name: Run tests with coverage
       run: |
-        cd app
         coverage run -m pytest
         coverage report
-        coverage xml -o coverage.xml
 
-    # Step 8: Generate coverage badge using Anybadge
+    # Step 8: Extract coverage percentage
+    - name: Extract coverage percentage
+      id: coverage
+      run: |
+        coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
+        echo "Coverage percentage is: $coverage_percentage"
+        echo "{coverage_percentage}={$coverage_percentage}" >> $GITHUB_OUTPUT
+
+    # Step 9: Fail if coverage is below threshold
+    - name: Check coverage score
+      if: ${{ steps.coverage.outputs.coverage_percentage < '90' }}
+      run: |
+        echo "Coverage is below the required threshold"
+        exit 1
+
+    # Step 10: Generate coverage badge using Anybadge
     - name: Generate coverage badge
       run: |
         cd app
         coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
         anybadge --value=$coverage_percentage --file=../img/coverage_badge.svg coverage
 
-    # Step 9: Upload the badges as GitHub artifacts (optional)
+    # Step 11: Upload the badges as GitHub artifacts (optional)
     - name: Upload pylint badge
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pylint-badge
         path: img/pylint_badge.svg
 
     - name: Upload coverage badge
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-badge
         path: img/coverage_badge.svg
 
-    # (Optional) Step 10: Commit the badges to the repo if you want them automatically updated
+    # (Optional) Step 12: Commit the badges to the repo if you want them automatically updated
     - name: Commit badges
       run: |
         git config --local user.email "actions@github.com"
