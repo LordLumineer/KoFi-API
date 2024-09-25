@@ -1,3 +1,4 @@
+"""./app/api/router.py"""
 from fastapi import APIRouter
 
 from app.api.routes import admin, db, kofi, user

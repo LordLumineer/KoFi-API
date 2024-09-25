@@ -1,4 +1,4 @@
-# requirements.txt
+# .app/requirements.txt
 
 alembic==1.13.2
 APScheduler==3.10.4

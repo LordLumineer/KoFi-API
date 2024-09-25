@@ -1,5 +1,12 @@
-"""Ko-fi transaction model."""
+"""
+Models for Ko-fi transaction data and user data.
+
+@file: ./app/core/models.py
+@date: 2024-09-22
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 from pydantic import BaseModel
+
 from sqlalchemy import PickleType
 from sqlalchemy.ext.mutable import MutableList, MutableDict
 from sqlalchemy.orm import Mapped, mapped_column
@@ -61,6 +68,9 @@ class KofiTransaction(Base):
         MutableDict.as_mutable(PickleType))
 
 class KofiUserSchema(BaseModel):
+    """
+    Schemas for User data.
+    """
     verification_token: str
     data_retention_days: int
     latest_request_at: str

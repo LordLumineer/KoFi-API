@@ -1,3 +1,10 @@
+"""
+Database module for Ko-fi donation API.
+
+@file: ./app/core/db.py
+@date: 2024-09-22
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 import logging
 import os
 from datetime import datetime, timedelta
@@ -16,7 +23,17 @@ engine = create_engine(url=settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_db():
+def get_db() -> Session:
+    """
+    Dependency to get a new database session.
+
+    This function is a FastAPI dependency that returns a new database session
+    each time it is called. The session is properly closed after the generator
+    is exhausted.
+
+    Yields:
+        Session: A new database session.
+    """
     db = SessionLocal()
     try:
         yield db
@@ -24,7 +41,20 @@ def get_db():
         db.close()
 
 
-def remove_expired_transactions():
+def remove_expired_transactions() -> None:
+    """
+    Remove expired transactions from the database.
+
+    This function removes all transactions that are older than the number of days
+    specified in the user's data_retention_days field. The function is meant to be
+    called as a background task to periodically clean up the database.
+
+    The function first retrieves all users from the database, and then iterates
+    over each user, deleting all transactions that are older than the specified
+    number of days.
+
+    Finally, the database session is properly closed.
+    """
     db_generator = get_db()
     db = next(db_generator)
     try:
@@ -38,7 +68,17 @@ def remove_expired_transactions():
         db.close()
 
 
-def run_migrations():
+def run_migrations() -> None:
+    """
+    Run Alembic migrations to the latest version.
+
+    This function is meant to be called at application startup. It configures
+    Alembic with the `alembic.ini` file and upgrades the database to the latest
+    version. The logger is temporarily disabled to prevent logging while the
+    migrations are being run.
+
+    The function blocks until the migrations are complete.
+    """
     alembic_cfg = Config("alembic.ini")
     logger.info("Running Alembic migrations...")
     command.upgrade(alembic_cfg, "head")
@@ -47,7 +87,26 @@ def run_migrations():
     logger.info("Alembic migrations completed.")
 
 
-async def handle_database_import(uploaded_db_path: str, mode: str):
+async def handle_database_import(uploaded_db_path: str, mode: str) -> bool:
+    """
+    Handles importing a database from an uploaded SQLite file.
+
+    The function takes an uploaded SQLite database file path and a mode string as arguments.
+    The mode string can be either "recover" or "import".
+
+    In "recover" mode, the function will replace all existing data in the current database
+    with the data from the uploaded database. If a row does not exist in the current database,
+    it will be added. If a row exists, its data will be replaced with the data from the
+    uploaded database if the data is different.
+
+    In "import" mode, the function will not replace existing data in the current database.
+    If a row does not exist in the current database, it will be added. If a row exists, its
+    data will not be replaced with the data from the uploaded database.
+
+    The function returns a boolean indicating whether the import was successful.
+
+    After the import is complete, the uploaded database file is removed.
+    """
     # Connect to the uploaded SQLite database
     upload_engine = create_engine(f"sqlite:///{uploaded_db_path}")
     upload_conn = upload_engine.connect()
@@ -124,17 +183,28 @@ async def handle_database_import(uploaded_db_path: str, mode: str):
     upload_conn.close()
     os.remove(uploaded_db_path)
 
-    return
+    return True
 
 
-async def export_db(db: Session):
-    EXPORT_PATH = "./output.db"
+async def export_db(db: Session) -> str:
+    """
+    Export the current database to a file.
+
+    Args:
+        db (Session): The database session.
+
+    Returns:
+        str: The path to the exported database file.
+
+    Raises:
+        HTTPException: If the database file is not found.
+    """
+    export_path = "./output.db"
     if "sqlite" in str(engine.url):
         # If it's SQLite, serve the actual database file
         ENGINE_DB_PATH = engine.url.database
         if os.path.exists(ENGINE_DB_PATH):
-            shutil.copyfile(ENGINE_DB_PATH, EXPORT_PATH)
-            # return FileResponse(EXPORT_DB, filename="my_database.db", media_type="application/octet-stream")
+            shutil.copyfile(ENGINE_DB_PATH, export_path)
         else:
             raise HTTPException(
                 status_code=404, detail="SQLite database file not found.")
@@ -142,7 +212,7 @@ async def export_db(db: Session):
         # For non-SQLite databases, dump the SQL statements
         metadata = MetaData()
         metadata.reflect(bind=engine)  # Reflect the database schema
-        with open(EXPORT_PATH, "w", encoding="utf-8") as file:
+        with open(export_path, "w", encoding="utf-8") as file:
             # Write schema first
             for table in reversed(metadata.sorted_tables):
                 file.write(str(table))
@@ -156,7 +226,6 @@ async def export_db(db: Session):
                     columns = ", ".join([col for col in result.keys()])
                     for row in rows:
                         values = ", ".join([f"'{str(val)}'" for val in row])
-                        insert_stmt = f"INSERT INTO {
-                            table.name} ({columns}) VALUES ({values});\n"
+                        insert_stmt = f"INSERT INTO {table.name} ({columns}) VALUES ({values});\n"
                         file.write(insert_stmt)
-    return EXPORT_PATH
+    return export_path

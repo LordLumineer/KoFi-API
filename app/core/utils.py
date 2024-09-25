@@ -1,8 +1,30 @@
+"""
+Utility functions for the Ko-fi donation API.
+
+@file: ./app/core/utils.py
+@date: 2024-09-22
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 import httpx
 from fastapi import HTTPException
 
 
 def currency_converter(amount: float, from_currency: str, to_currency: str) -> float:
+    """
+    Convert a given amount from one currency to another.
+
+    Args:
+        amount (float): The amount to convert.
+        from_currency (str): The currency to convert from.
+        to_currency (str): The currency to convert to.
+
+    Returns:
+        float: The converted amount.
+
+    Raises:
+        HTTPException: If the API endpoint timed out or failed to retrieve the
+            exchange rate.
+    """
     # API endpoint to get exchange rates
     endpoint = f"https://open.er-api.com/v6/latest/{from_currency}"
     backup_endpoint = f"https://api.exchangerate-api.com/v4/latest/{

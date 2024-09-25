@@ -1,3 +1,10 @@
+"""
+API endpoints for Ko-fi database management.
+
+@file: ./app/api/routes/db.py
+@date: 2024-09-22
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 import os
 
 from datetime import datetime, timezone
@@ -14,8 +21,25 @@ router = APIRouter()
 
 
 @router.get("/export")
-async def db_export(ADMIN_SECRET_KEY: str, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    if ADMIN_SECRET_KEY != settings.ADMIN_SECRET_KEY:
+async def db_export(
+    admin_secret_key: str,
+    background_tasks: BackgroundTasks, db: Session = Depends(get_db)
+):
+    """
+    Export the current database to a file.
+
+    Args:
+        admin_secret_key (str): The secret key to authorize the export.
+        background_tasks (BackgroundTasks): FastAPI's BackgroundTasks object.
+        db (Session): The database session.
+
+    Returns:
+        FileResponse: The exported database file.
+
+    Raises:
+        HTTPException: If the secret key is invalid or there is an error exporting the database.
+    """
+    if admin_secret_key != settings.admin_secret_key:
         raise HTTPException(
             status_code=401, detail="Invalid admin secret key")
     try:
@@ -25,7 +49,12 @@ async def db_export(ADMIN_SECRET_KEY: str, background_tasks: BackgroundTasks, db
                 os.remove(file_path)
         file_path = await export_db(db)
         background_tasks.add_task(remove_file, file_path)
-        return FileResponse(file_path, filename=f'{settings.PROJECT_NAME}_export_{int(datetime.now(timezone.utc).timestamp())}.db', media_type="application/octet-stream")
+        return FileResponse(
+            path=file_path,
+            filename=f'{settings.PROJECT_NAME}_export_{
+                int(datetime.now(timezone.utc).timestamp())}.db',
+            media_type="application/octet-stream"
+        )
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to export database: {str(e)}") from e
@@ -33,10 +62,21 @@ async def db_export(ADMIN_SECRET_KEY: str, background_tasks: BackgroundTasks, db
 
 @router.post("/recover")
 async def db_recover(
-    ADMIN_SECRET_KEY: str,
+    admin_secret_key: str,
     file: UploadFile = File(...),
 ):
-    if ADMIN_SECRET_KEY != settings.ADMIN_SECRET_KEY:
+    """
+    Recover a database from an uploaded file. This will overwrite the existing
+    database.
+
+    Args:
+        admin_secret_key (str): The secret key to authorize the import.
+        file (UploadFile): The uploaded file containing the database to import.
+
+    Returns:
+        dict: A JSON response with a success message.
+    """
+    if admin_secret_key != settings.admin_secret_key:
         raise HTTPException(
             status_code=401, detail="Invalid admin secret key")
 
@@ -53,10 +93,21 @@ async def db_recover(
 
 @router.post("/import")
 async def db_import(
-    ADMIN_SECRET_KEY: str,
+    admin_secret_key: str,
     file: UploadFile = File(...),
 ):
-    if ADMIN_SECRET_KEY != settings.ADMIN_SECRET_KEY:
+    """
+    Import a database from an uploaded file. This will overwrite the existing
+    database.
+
+    Args:
+        admin_secret_key (str): The secret key to authorize the import.
+        file (UploadFile): The uploaded file containing the database to import.
+
+    Returns:
+        dict: A JSON response with a success message.
+    """
+    if admin_secret_key != settings.admin_secret_key:
         raise HTTPException(
             status_code=401, detail="Invalid admin secret key")
 

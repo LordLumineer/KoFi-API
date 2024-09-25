@@ -1,3 +1,11 @@
+"""
+Ko-fi webhook API endpoints (https://ko-fi.com/manage/webhooks).
+And data retrieval endpoints, Main API.
+
+@file: ./app/api/routes/kofi.py
+@date: 2024-09-22
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 import json
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, Form
@@ -6,7 +14,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from app.api.routes.user import create_user
+from app.api.routes.user import create_user, get_user, update_user
 from app.core.db import get_db
 from app.core.models import KofiTransactionSchema, KofiTransaction, KofiUser
 from app.core.utils import currency_converter
@@ -19,6 +27,21 @@ router = APIRouter()
 def receive_kofi_transaction(
     data: str = Form(...), db: Session = Depends(get_db)
 ):
+    """
+    Receive a Ko-fi transaction from the Ko-fi webhook API, and store it in the database.
+
+    Args:
+        data: The transaction data, as a stringified JSON object.
+        db: The database session, provided by the dependency injection system.
+
+    Returns:
+        A HTML response with a status code of 200, 
+        indicating that the transaction was stored successfully.
+
+    Raises:
+        HTTPException: If the transaction data is invalid, 
+            or if the transaction could not be stored in the database.
+    """
     # Parse the data
     try:
         transaction = json.loads(data)
@@ -52,14 +75,40 @@ def receive_kofi_transaction(
 
 @router.get("/transactions/{verification_token}")
 def get_transactions(verification_token: str, db: Session = Depends(get_db)):
+    """
+    Get all transactions for a given user.
+
+    Args:
+        verification_token: The user's verification token.
+        db: The database session, provided by the dependency injection system.
+
+    Returns:
+        A list of all transactions for the user, represented as KofiTransactionSchema.
+
+    Raises:
+        HTTPException: If the provided verification token is invalid.
+    """
     transactions = db.query(KofiTransaction).filter(
         KofiTransaction.verification_token == verification_token
     ).all()
     return transactions
 
 
-@router.get("/transactions/{verification_token}/{transaction_id}", response_model=KofiTransactionSchema)
+@router.get(
+    "/transactions/{verification_token}/{transaction_id}",
+    response_model=KofiTransactionSchema
+)
 def get_transaction(verification_token: str, transaction_id: str, db: Session = Depends(get_db)):
+    """
+    Get a single transaction by its verification token and message ID.
+
+    Args:
+        verification_token: The verification token of the user that made the transaction.
+        transaction_id: The message ID of the transaction.
+
+    Returns:
+        The transaction object, or 404 if not found.
+    """
     transaction = db.query(KofiTransaction).filter(
         KofiTransaction.verification_token == verification_token,
         KofiTransaction.message_id == transaction_id
@@ -75,22 +124,33 @@ def get_transactions_total(
     currency: str | None = None,
     db: Session = Depends(get_db)
 ):
+    """
+    Get the total amount of donations for a given user, depending on the 'method' parameter.
+
+    'total' returns the total amount of all donations for the user.
+    'recent' returns the total amount of donations since the 'since' parameter (ISO 8601 format).
+    'latest' returns the total amount of the latest donation.
+
+    If the 'currency' parameter is not provided, the user's preferred currency will be used.
+
+    :param method: The method to use for calculating the total amount of donations.
+    :param verification_token: The user's verification token.
+    :param since: The date and time to start calculating the total amount from.
+    :param currency: The currency to convert the amounts to.
+    :returns: The total amount of donations.
+    """
     try:
         method = method.lower()
-        assert method in [
-            'total', 'recent', 'latest'], "Invalid 'method' parameter. Expected 'total', 'recent', or 'latest'."
+        if method not in ['total', 'recent', 'latest']:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid 'method' parameter ({method}). Expected 'total', 'recent', or 'latest'.")
     except AssertionError as e:
         raise HTTPException(
             status_code=400,
             detail=f"Invalid 'method' parameter ({method}). Expected 'total', 'recent', or 'latest'.") from e
 
-    user = db.query(KofiUser).filter(
-        KofiUser.verification_token == verification_token
-    ).first()
-
-    if not user:
-        raise HTTPException(
-            status_code=404, detail="Invalid verification token")
+    user = get_user(verification_token, db=db)
 
     data = {}
     match method:
@@ -114,14 +174,12 @@ def get_transactions_total(
                 KofiTransaction.verification_token == verification_token,
                 KofiTransaction.timestamp >= since
             ).all()
-            try:
-                user.latest_request_at = datetime.now(
-                    timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
-                db.commit()
-                db.refresh(user)
-            except IntegrityError as e:
-                db.rollback()
-                raise HTTPException(status_code=400, detail=str(e.orig)) from e
+            update_user(
+                verification_token,
+                latest_request_at=datetime.now(
+                    timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                db=db
+            )
 
         case 'latest':
             data = db.query(KofiTransaction).filter(
