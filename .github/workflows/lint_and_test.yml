@@ -56,10 +56,9 @@ jobs:
         coverage json -o coverage.json
 
     # Generate badge
-    - name: Upload coverage result as badge
-      uses: cicirello/jacoco-badge-generator@v3
-      with:
-        pytest-cov-json-file: app/coverage.json # Customize this based on output type
-        badge-name: pytest
-        fail-threshold: 90
-        readme-path: README.md
+    # - name: Upload coverage result as badge
+    #   uses: cicirello/jacoco-badge-generator@v2
+    #   with:
+    #     coverage-endpoint-filename: app/coverage.json # Customize this based on output type
+    #     coverage-label: pytest
+
