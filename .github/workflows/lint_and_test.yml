@@ -45,7 +45,7 @@ jobs:
 
     # Step 5: Fail if pylint score is below threshold
     - name: Check pylint score
-      if: ${{ steps.pylint.outputs.pylint_score < '5.0' }}
+      if: ${{ steps.pylint.outputs.pylint_score < '10.0' }}
       run: |
         echo "Pylint score is : ${{ steps.pylint.outputs.pylint_score }} | $pylint_score"
         echo "Pylint score is below threshold"
@@ -55,6 +55,7 @@ jobs:
     # Step 6: Generate pylint badge using Anybadge
     - name: Generate pylint badge
       run: |
+        rm img/pylint_badge.svg
         cd app
         anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=../img/pylint_badge.svg pylint
 
@@ -82,6 +83,7 @@ jobs:
     # Step 10: Generate coverage badge using Anybadge
     - name: Generate coverage badge
       run: |
+        rm img/coverage_badge.svg
         cd app
         coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
         anybadge --value=$coverage_percentage --file=../img/coverage_badge.svg coverage
