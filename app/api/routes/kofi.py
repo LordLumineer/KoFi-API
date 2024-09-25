@@ -46,13 +46,13 @@ def receive_kofi_transaction(
     try:
         transaction = json.loads(data)
     except json.JSONDecodeError as e:
-        return HTTPException(status_code=400, detail=f"Invalid JSON format, error: {e}" + str(e))
+        raise HTTPException(status_code=400, detail=f"Invalid JSON format, error: {e}" + str(e)) from e
 
     # Validate the data
     try:
         transaction = KofiTransactionSchema(**transaction)
     except ValueError as e:
-        return HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     # To SqlAlchemy
     transaction = KofiTransaction(**transaction.model_dump())
@@ -91,6 +91,8 @@ def get_transactions(verification_token: str, db: Session = Depends(get_db)):
     transactions = db.query(KofiTransaction).filter(
         KofiTransaction.verification_token == verification_token
     ).all()
+    if not transactions:
+        raise HTTPException(status_code=404, detail="Invalid verification token")
     return transactions
 
 
@@ -113,10 +115,12 @@ def get_transaction(verification_token: str, transaction_id: str, db: Session = 
         KofiTransaction.verification_token == verification_token,
         KofiTransaction.message_id == transaction_id
     ).first()
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
     return transaction
 
 
-@router.get("/ammout/{method}/{verification_token}", response_model=float)
+@router.get("/amount/{method}/{verification_token}", response_model=float)
 def get_transactions_total(
     method: str,
     verification_token: str,
@@ -151,6 +155,8 @@ def get_transactions_total(
             detail=f"Invalid 'method' parameter ({method}). Expected 'total', 'recent', or 'latest'.") from e
 
     user = get_user(verification_token, db=db)
+    if not user:
+        raise HTTPException(status_code=404, detail="Invalid verification token")
 
     data = {}
     match method:

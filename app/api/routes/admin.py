@@ -32,7 +32,7 @@ def read_transaction_db(admin_secret_key, db: Session = Depends(get_db)):
     Raises:
         HTTPException: If the provided admin secret key is invalid.
     """
-    if admin_secret_key != settings.admin_secret_key:
+    if admin_secret_key != settings.ADMIN_SECRET_KEY:
         raise HTTPException(
             status_code=401, detail="Invalid admin secret key")
     return db.query(KofiTransaction).all()
@@ -53,7 +53,7 @@ def read_user_db(admin_secret_key, db: Session = Depends(get_db)):
     Raises:
         HTTPException: If the provided admin secret key is invalid.
     """
-    if admin_secret_key != settings.admin_secret_key:
+    if admin_secret_key != settings.ADMIN_SECRET_KEY:
         raise HTTPException(
             status_code=401, detail="Invalid admin secret key")
     return db.query(KofiUser).all()

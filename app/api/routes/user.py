@@ -44,7 +44,7 @@ def create_user(
     """
     user = KofiUser(
         verification_token=verification_token,
-        data_retention_days=data_retention_days or settings.DATA_RETENTION_DAYS,
+        data_retention_days=data_retention_days if data_retention_days else settings.DATA_RETENTION_DAYS,
         latest_request_at=datetime.now(
             timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     )
@@ -133,12 +133,13 @@ def delete_user(
     if not user:
         raise HTTPException(
             status_code=404, detail="Invalid verification token")
-    user.delete()
+    db.delete(user)
     db.commit()
     if inculde_transactions:
         transactions = db.query(KofiTransaction).filter(
             KofiTransaction.verification_token == verification_token
-        )
-        transactions.delete()
+        ).all()
+        for transaction in transactions:
+            db.delete(transaction)
         db.commit()
     return {"message": "User deleted successfully"}

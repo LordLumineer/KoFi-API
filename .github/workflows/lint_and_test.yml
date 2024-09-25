@@ -1,0 +1,65 @@
+name: Lint and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        cd app
+        pip install -r requirements.txt
+        cd test
+        pip install -r requirements.txt
+
+    # Run pylint and calculate score
+    - name: Run pylint
+      id: pylint
+      run: |
+        cd app
+        pylint_score=$(pylint . --fail-under=9.0 --output-format=parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
+        echo "Pylint score is: $pylint_score"
+        echo "::set-output name=pylint_score::$pylint_score"
+      
+    # Fail if pylint score is below threshold
+    - name: Check pylint score
+      if: ${{ steps.pylint.outputs.pylint_score < '9.0' }}
+      run: |
+        echo "Pylint score is below threshold"
+        exit 1
+
+    # Run pytest with coverage
+    - name: Run tests and coverage
+      run: |
+        cd app
+        coverage run -m pytest
+        coverage json -o coverage.json
+
+    # Generate badge
+    - name: Upload coverage result as badge
+      uses: cicirello/jacoco-badge-generator@v3
+      with:
+        pytest-cov-json-file: app/coverage.json # Customize this based on output type
+        badge-name: pytest
+        fail-threshold: 90
+        readme-path: README.md

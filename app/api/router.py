@@ -1,4 +1,10 @@
-"""./app/api/router.py"""
+"""
+API routes for the Ko-fi donation API.
+
+@file: ./app/api/router.py
+@date: 2024-09-22
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 from fastapi import APIRouter
 
 from app.api.routes import admin, db, kofi, user

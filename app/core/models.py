@@ -5,7 +5,9 @@ Models for Ko-fi transaction data and user data.
 @date: 2024-09-22
 @author: Lord Lumineer (lordlumineer@gmail.com)
 """
-from pydantic import BaseModel
+from datetime import datetime, timezone
+from typing import Self
+from pydantic import BaseModel, Field, model_validator
 
 from sqlalchemy import PickleType
 from sqlalchemy.ext.mutable import MutableList, MutableDict
@@ -26,7 +28,7 @@ class KofiTransactionSchema(BaseModel):
     type: str
     is_public: bool
     from_name: str
-    message: None | str
+    message: None | str = Field(default=None, nullable=True)
     amount: str
     url: str
     email: str
@@ -34,9 +36,9 @@ class KofiTransactionSchema(BaseModel):
     is_subscription_payment: bool
     is_first_subscription_payment: bool
     kofi_transaction_id: str
-    shop_items: None | list
-    tier_name: None | str
-    shipping: None | dict
+    shop_items: None | list = Field(default=None, nullable=True)
+    tier_name: None | str = Field(default=None, nullable=True)
+    shipping: None | dict = Field(default=None, nullable=True)
 
     class Config:
         """ORM model configuration"""
@@ -72,9 +74,10 @@ class KofiUserSchema(BaseModel):
     Schemas for User data.
     """
     verification_token: str
-    data_retention_days: int
-    latest_request_at: str
-    prefered_currency: str
+    data_retention_days: int = Field(default=settings.DATA_RETENTION_DAYS)
+    latest_request_at: str = Field(default=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'))
+    prefered_currency: str = Field(default="USD")
+
     class Config:
         """ORM model configuration"""
         from_attributes = True
@@ -85,7 +88,6 @@ class KofiUser(Base):
     __tablename__ = "kofi_users"
 
     verification_token: Mapped[str] = mapped_column(primary_key=True, index=True)
-    data_retention_days: Mapped[int] = mapped_column(
-        default=settings.DATA_RETENTION_DAYS)
+    data_retention_days: Mapped[int] = mapped_column(default=settings.DATA_RETENTION_DAYS)
     latest_request_at: Mapped[str]
     prefered_currency: Mapped[str] = mapped_column(default="USD")

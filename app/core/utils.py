@@ -5,6 +5,7 @@ Utility functions for the Ko-fi donation API.
 @date: 2024-09-22
 @author: Lord Lumineer (lordlumineer@gmail.com)
 """
+import os
 import httpx
 from fastapi import HTTPException
 
@@ -50,3 +51,8 @@ def currency_converter(amount: float, from_currency: str, to_currency: str) -> f
     # Calculate the converted amount
     converted_amount = amount * exchange_rate
     return converted_amount
+
+def remove_file(file_path: str):
+    """Background task to delete the file after sending it."""
+    if os.path.exists(file_path):
+        os.remove(file_path)

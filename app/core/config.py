@@ -8,8 +8,8 @@ Configuration for Ko-fi donation API.
 import logging
 import warnings
 from typing import Literal, Self
-from pydantic import model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, model_validator
+from pydantic_settings import BaseSettings#, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -35,14 +35,19 @@ class Settings(BaseSettings):
             Enforce that the default secrets are not used in non-local environments.
     """
 
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", env_ignore_empty=True, extra="ignore"
-    )
-    PROJECT_NAME: str = "Ko-fi API"
-    DATA_RETENTION_DAYS: int = 10
-    DATABASE_URL: str = "sqlite:///./KoFi.db"
-    ADMIN_SECRET_KEY: str = "changethis"
-    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+    # model_config = SettingsConfigDict(
+    #     env_file=".env", env_file_encoding="utf-8", env_ignore_empty=True, extra="ignore"
+    # )
+    # _env_file=".env"
+    # _env_file_encoding="utf-8"
+    # _env_ignore_empty=True
+    # extra="ignore"
+    
+    PROJECT_NAME: str = Field(default="Ko-fi API")
+    DATA_RETENTION_DAYS: int = Field(default=30)
+    DATABASE_URL: str = Field(default="sqlite:///./KoFi.db")  # "sqlite:///./KoFi.db"
+    ADMIN_SECRET_KEY: str = Field(default="changethis")  # "123456"  # Set to "changethis"
+    ENVIRONMENT: Literal["local", "staging", "production"] = Field(default="local")  # "local"
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         """
