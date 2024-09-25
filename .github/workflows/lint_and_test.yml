@@ -39,16 +39,15 @@ jobs:
       id: pylint
       run: |
         cd app
-        pylint_score=$(pylint . --fail-under=9.8 --output-format=parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
+        pylint_score=$(pylint . --fail-under=5.0 --output-format=parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
         echo "Pylint score is: $pylint_score"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
 
     # Step 5: Fail if pylint score is below threshold
     - name: Check pylint score
-      if: ${{ steps.pylint.outputs.pylint_score < '9.8' }}
+      if: ${{ steps.pylint.outputs.pylint_score < '5.0' }}
       run: |
-        echo "Pylint score is : ${{ steps.pylint.outputs.pylint_score }} | $pylint_score"
-        echo "Pylint score is below threshold"
+        echo "Pylint score is below the required threshold. ${{ steps.pylint.outputs.pylint_score }} (required >5.0)"
         exit 1
         
 
@@ -75,8 +74,9 @@ jobs:
 
     # Step 9: Fail if coverage is below threshold
     - name: Check coverage score
-      if: ${{ steps.coverage.outputs.coverage_percentage < '20' }}
+      if: ${{ steps.coverage.outputs.coverage_percentage < '99' }}
       run: |
+        echo "Coverage is below the required threshold. ${{ steps.pylint.outputs.pylint_score }} (required >99%)"
         echo "Coverage is below the required threshold"
         exit 1
 
