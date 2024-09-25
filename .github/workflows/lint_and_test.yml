@@ -47,6 +47,7 @@ jobs:
     - name: Check pylint score
       if: ${{ steps.pylint.outputs.pylint_score < '5.0' }}
       run: |
+        echo "Pylint score is : ${{ steps.pylint.outputs.pylint_score }} | $pylint_score"
         echo "Pylint score is below threshold"
         exit 1
         
