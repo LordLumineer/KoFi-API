@@ -24,6 +24,13 @@ jobs:
         python-version: '3.12'
         cache: 'pip'
 
+    # (Optional) Step 3: set thresholds for pylint and coverage
+    - name: Set up thresholds
+      id: thresholds
+      run: |
+        echo "pylint_threshold=5.0" >> $GITHUB_ENV
+        echo "coverage_threshold=99" >> $GITHUB_ENV
+
     # Step 3: Install dependencies (including Anybadge)
     - name: Install dependencies
       run: |
@@ -39,15 +46,15 @@ jobs:
       id: pylint
       run: |
         cd app
-        pylint_score=$(pylint . --fail-under=5.0 --output-format=parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
+        pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
         echo "Pylint score is: $pylint_score"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
 
     # Step 5: Fail if pylint score is below threshold
     - name: Check pylint score
-      if: ${{ steps.pylint.outputs.pylint_score < '5.0' }}
+      if: ${{ steps.pylint.outputs.pylint_score < steps.thresholds.outputs.pylint_threshold }}
       run: |
-        echo "Pylint score is below the required threshold. ${{ steps.pylint.outputs.pylint_score }} (required >5.0)"
+        echo "Pylint score is below the required threshold. ${{ steps.pylint.outputs.pylint_score }} (required >${{ steps.thresholds.outputs.pylint_threshold }})"
         exit 1
 
     # Step 6: Run coverage and generate report
@@ -66,9 +73,9 @@ jobs:
 
     # Step 8: Fail if coverage is below threshold
     - name: Check coverage score
-      if: ${{ steps.coverage.outputs.coverage_percentage < '99' }}
+      if: ${{ steps.coverage.outputs.coverage_percentage < steps.thresholds.outputs.coverage_threshold }}
       run: |
-        echo "Coverage is below the required threshold. ${{ steps.coverage.outputs.coverage_percentage }} (required >99%)"
+        echo "Coverage is below the required threshold. ${{ steps.coverage.outputs.coverage_percentage }}% (required >${{ steps.thresholds.outputs.coverage_threshold }}%)"
         echo "Coverage is below the required threshold"
         exit 1
 
