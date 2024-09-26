@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="99" height="20">
+<svg xmlns="http://www.w3.org/2000/svg" width="86" height="20">
     <linearGradient id="b" x2="0" y2="100%">
         <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
         <stop offset="1" stop-opacity=".1"/>
     </linearGradient>
     <mask id="anybadge_1">
-        <rect width="99" height="20" rx="3" fill="#fff"/>
+        <rect width="86" height="20" rx="3" fill="#fff"/>
     </mask>
     <g mask="url(#anybadge_1)">
-        <path fill="#555" d="M0 0h44v20H0z"/>
-        <path fill="#4c1" d="M44 0h55v20H44z"/>
-        <path fill="url(#b)" d="M0 0h99v20H0z"/>
+        <path fill="#555" d="M0 0h50v20H0z"/>
+        <path fill="#E05D44" d="M50 0h36v20H50z"/>
+        <path fill="url(#b)" d="M0 0h86v20H0z"/>
     </g>
     <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-        <text x="23.0" y="15" fill="#010101" fill-opacity=".3">pylint</text>
-        <text x="22.0" y="14">pylint</text>
+        <text x="26.0" y="15" fill="#010101" fill-opacity=".3">PyTest</text>
+        <text x="25.0" y="14">PyTest</text>
     </g>
     <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-        <text x="72.5" y="15" fill="#010101" fill-opacity=".3">8.23/10</text>
-        <text x="71.5" y="14">8.23/10</text>
+        <text x="69.0" y="15" fill="#010101" fill-opacity=".3">FAIL</text>
+        <text x="68.0" y="14">FAIL</text>
     </g>
 </svg>
