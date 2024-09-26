@@ -46,7 +46,7 @@ jobs:
       id: pylint
       run: |
         cd app
-        pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
+        pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:../reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
         echo "Pylint score is: $pylint_score"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
 
@@ -62,7 +62,7 @@ jobs:
       run: |
         coverage run -m pytest
         coverage report
-        coverage json -o coverage.json --pretty-print
+        coverage json -o ../reports/coverage.json --pretty-print
 
     # Step 7: Extract coverage percentage
     - name: Extract coverage percentage
@@ -106,12 +106,24 @@ jobs:
       with:
         name: coverage-badge
         path: img/coverage_badge.svg
+    
+    - name: Upload pylint report
+      uses: actions/upload-artifact@v4
+      with:
+        name: pylint-badge
+        path: reports/pylint.json
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-badge
+        path: reports/coverage.json
 
     # (Optional) Step 12: Commit the badges to the repo if you want them automatically updated
     - name: Commit badges
       run: |
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
-        git add img/pylint_badge.svg img/coverage_badge.svg
+        git add img/pylint_badge.svg img/coverage_badge.svg reports/pylint.json reports/coverage.json
         git commit -m "Update badges"
         git push

@@ -1,7 +1,7 @@
 # KoFi-API
 
-[![Pylint Score](./img/pylint_badge.svg)](./app/pylint.json)
-[![Coverage](./img/coverage_badge.svg)](./app/coverage.json)
+[![Pylint Score](./img/pylint_badge.svg)](./reports/pylint.json)
+[![Coverage](./img/coverage_badge.svg)](./reports/coverage.json)
 
 ## Useful CMD
 
