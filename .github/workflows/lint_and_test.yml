@@ -110,13 +110,13 @@ jobs:
     - name: Upload pylint report
       uses: actions/upload-artifact@v4
       with:
-        name: pylint-badge
+        name: pylint-report
         path: reports/pylint.json
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
       with:
-        name: coverage-badge
+        name: coverage-report
         path: reports/coverage.json
 
     # (Optional) Step 12: Commit the badges to the repo if you want them automatically updated
@@ -125,5 +125,5 @@ jobs:
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
         git add img/pylint_badge.svg img/coverage_badge.svg reports/pylint.json reports/coverage.json
-        git commit -m "Update badges"
+        git commit -m "Update badges & reports"
         git push
