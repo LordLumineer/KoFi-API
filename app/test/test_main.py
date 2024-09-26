@@ -7,6 +7,8 @@ from fastapi.routing import APIRoute
 # Initialize the FastAPI TestClient
 client = TestClient(app)
 
+def test_FAIL():
+    assert False
 
 # Test the /ping endpoint
 def test_ping():

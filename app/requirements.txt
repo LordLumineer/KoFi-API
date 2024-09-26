@@ -2,6 +2,6 @@
 
 alembic==1.13.2
 APScheduler==3.10.4
-fastapi[standard]==0.113.0
+fastapi[standard]==0.115.0
 pydantic-settings==2.5.2
 SQLAlchemy==2.0.35

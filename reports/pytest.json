@@ -1,0 +1,13 @@
+{
+    "created": 1727391158.709125,
+    "duration": 2.164799451828003,
+    "exitcode": 1,
+    "root": "D:\\Desktop\\Codding Space\\KoFi-API\\app",
+    "environment": {},
+    "summary": {
+        "passed": 47,
+        "failed": 1,
+        "total": 48,
+        "collected": 48
+    }
+}

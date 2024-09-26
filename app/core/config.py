@@ -9,7 +9,7 @@ import logging
 import warnings
 from typing import Literal, Self
 from pydantic import Field, model_validator
-from pydantic_settings import BaseSettings#, SettingsConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -25,7 +25,7 @@ class Settings(BaseSettings):
             The URL of the database.
         ADMIN_SECRET_KEY: str
             The secret key to authorize admin operations.
-        ENVIRONMENT: Literal["local", "staging", "production"]
+        ENVIRONMENT: Literal["local", "production"]
             The environment to run in.
 
     Methods:
@@ -35,19 +35,19 @@ class Settings(BaseSettings):
             Enforce that the default secrets are not used in non-local environments.
     """
 
-    # model_config = SettingsConfigDict(
-    #     env_file=".env", env_file_encoding="utf-8", env_ignore_empty=True, extra="ignore"
-    # )
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", env_ignore_empty=True, extra="ignore"
+    )
     # _env_file=".env"
     # _env_file_encoding="utf-8"
     # _env_ignore_empty=True
     # extra="ignore"
     
     PROJECT_NAME: str = Field(default="Ko-fi API")
-    DATA_RETENTION_DAYS: int = Field(default=30)
+    DATA_RETENTION_DAYS: str | int = Field(default=30)
     DATABASE_URL: str = Field(default="sqlite:///./KoFi.db")  # "sqlite:///./KoFi.db"
     ADMIN_SECRET_KEY: str = Field(default="changethis")  # "123456"  # Set to "changethis"
-    ENVIRONMENT: Literal["local", "staging", "production"] = Field(default="local")  # "local"
+    ENVIRONMENT: Literal["local", "production"] = Field(default="local")  # "local"
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         """
@@ -80,6 +80,10 @@ class Settings(BaseSettings):
         warn/error accordingly. This is to ensure that the API is not deployed with
         the default secrets.
         """
+        try:
+            self.DATA_RETENTION_DAYS = int(self.DATA_RETENTION_DAYS)
+        except ValueError as e:
+            raise ValueError("DATA_RETENTION_DAYS must be an integer") from e
         self._check_default_secret("ADMIN_SECRET_KEY", self.ADMIN_SECRET_KEY)
 
         return self
