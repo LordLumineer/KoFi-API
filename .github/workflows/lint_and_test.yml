@@ -94,7 +94,7 @@ jobs:
     - name: Generate Badges
       run: |
         rm -f img/pylint_badge.svg
-        anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=.img/pylint_badge.svg pylint
+        anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=img/pylint_badge.svg pylint
         rm -f img/pytest_badge.svg
         if [ "${{ steps.covtest.outcome }}" == "failure" ]; then
           anybadge --label=PyTest --value=FAIL --file=img/pytest_badge.svg PASS=green FAIL=red
