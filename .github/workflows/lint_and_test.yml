@@ -24,14 +24,15 @@ jobs:
         python-version: '3.12'
         cache: 'pip'
 
-    # (Optional) Step 3: set thresholds for pylint and coverage
+    # Step 3: set thresholds for pylint and coverage
     - name: Set up thresholds
       id: thresholds
       run: |
         echo "pylint_threshold=2.5" >> $GITHUB_OUTPUT
-        echo "coverage_threshold=25" >> $GITHUB_OUTPUT
+        echo "coverage_threshold=50" >> $GITHUB_OUTPUT
+        echo "ALL_CHECKS_PASSED=true" >> $GITHUB_ENV  # Initialize with true
 
-    # Step 3: Install dependencies (including Anybadge)
+    # Step 4: Install dependencies (including Anybadge)
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -40,7 +41,7 @@ jobs:
         pip install -r requirements.txt
         pip install -r test/requirements-dev.txt
 
-    # Step 4: Run pylint and calculate the score
+    # Step 5: Run pylint and calculate the score
     - name: Run pylint
       id: pylint
       run: |
@@ -48,22 +49,33 @@ jobs:
         pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:../reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
         echo "Pylint score is: $pylint_score"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
+      continue-on-error: true  # Do not fail the job yet
 
-    # Step 5: Fail if pylint score is below threshold
+    # Step 6: Fail if pylint score is below threshold
     - name: Check pylint score
       if: ${{ steps.pylint.outputs.pylint_score < steps.thresholds.outputs.pylint_threshold }}
       run: |
         echo "Pylint score is below the required threshold. ${{ steps.pylint.outputs.pylint_score }} (required >${{ steps.thresholds.outputs.pylint_threshold }})"
-        exit 1
+        echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV  # Mark that one check failed
 
-    # Step 6: Run coverage and generate report
+    # Step 7: Run coverage and generate report
     - name: Run tests with coverage
+      id: covtest
       run: |
         coverage run -m pytest --tb=no --json-report --json-report-summary --json-report-indent=4 --json-report-file=../reports/pytest.json
         coverage report --fail-under=${{ steps.thresholds.outputs.coverage_threshold }}
         coverage json -o ../reports/coverage.json --pretty-print
+      continue-on-error: true  # Do not fail the job yet
 
-    # Step 7: Extract coverage percentage
+    # Step 8: Check pytest result based on exit code
+    - name: Check pytest result
+      run: |
+        if [ "${{ steps.covtest.outcome }}" == "failure" ]; then
+          echo "Tests failed. Setting failure flag."
+          echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
+        fi
+
+    # Step 8: Extract coverage percentage
     - name: Extract coverage percentage
       id: coverage
       run: |
@@ -71,72 +83,42 @@ jobs:
         echo "Coverage percentage is: $coverage_percentage"
         echo "coverage_percentage=$coverage_percentage" >> $GITHUB_OUTPUT
 
-    # Step 8: Fail if coverage is below threshold
+    # Step 9: Fail if coverage is below threshold
     - name: Check coverage score
       if: ${{ steps.coverage.outputs.coverage_percentage < steps.thresholds.outputs.coverage_threshold }}
       run: |
         echo "Coverage is below the required threshold. ${{ steps.coverage.outputs.coverage_percentage }}% (required >${{ steps.thresholds.outputs.coverage_threshold }}%)"
-        exit 1
+        echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV  # Mark that one check failed
 
-    # Step 9: Generate pylint badge using Anybadge
-    - name: Generate pylint badge
+    # Step 11: Generate Badges using Anybadge
+    - name: Generate Badges
       run: |
-        rm img/pylint_badge.svg
-        cd app
-        anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=../img/pylint_badge.svg pylint
+        rm -f img/pylint_badge.svg
+        anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=.img/pylint_badge.svg pylint
+        rm -f img/pytest_badge.svg
+        if [ "${{ steps.covtest.outcome }}" == "failure" ]; then
+          anybadge --label=PyTest --value=FAIL --file=img/pytest_badge.svg PASS=green FAIL=red
+        fi
+        if [ "${{ steps.covtest.outcome }}" == "success" ]; then
+          anybadge --label=PyTest --value=PASS --file=img/pytest_badge.svg PASS=green FAIL=red
+        fi
+        rm -f img/coverage_badge.svg
+        anybadge --value=${{ steps.coverage.outputs.coverage_percentage }} --file=img/coverage_badge.svg coverage
 
-    # Step 10: Generate Pytest badge using Anybadge
-    - name: Generate pytest badge
-      run: |
-        rm img/pytest_badge.svg
-        anybadge --label=PyTest --value=PASS --file=pytest_badge.svg PASS=green
-
-    # Step 11: Generate coverage badge using Anybadge
-    - name: Generate coverage badge
-      run: |
-        rm img/coverage_badge.svg
-        cd app
-        coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
-        anybadge --value=${{ steps.coverage.outputs.coverage_percentage }} --file=../img/coverage_badge.svg coverage
-
-    # Step 12: Upload the badges and reports as GitHub artifacts (optional)
-    - name: Upload pylint badge
+    # Step 13: Upload the badges and reports as GitHub artifacts (optional)
+    - name: Upload badges an reports
       uses: actions/upload-artifact@v4
       with:
-        name: pylint-badge
-        path: img/pylint_badge.svg
-    
-    - name: Upload pytest badge
-      uses: actions/upload-artifact@v4
-      with:
-        name: pytest-badge
-        path: img/pytest_badge.svg
+        name: pybadge-and-reports
+        path: |
+          img/pylint_badge.svg
+          img/pytest_badge.svg
+          img/coverage_badge.svg
+          reports/pylint.json
+          reports/pytest.json
+          reports/coverage.json
 
-    - name: Upload coverage badge
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-badge
-        path: img/coverage_badge.svg
-    
-    - name: Upload pylint report
-      uses: actions/upload-artifact@v4
-      with:
-        name: pylint-report
-        path: reports/pylint.json
-
-    - name: Upload pytest report
-      uses: actions/upload-artifact@v4
-      with:
-        name: pytest-report
-        path: reports/pytest.json
-
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: reports/coverage.json
-
-    # (Optional) Step 13: Commit the badges to the repo if you want them automatically updated
+    # (Optional) Step 14: Commit the badges to the repo if you want them automatically updated
     - name: Commit badges
       run: |
         git config --local user.email "actions@github.com"
@@ -144,3 +126,9 @@ jobs:
         git add img/pylint_badge.svg img/coverage_badge.svg img/pytest_badge.svg reports/pylint.json reports/coverage.json reports/pytest.json
         git commit -m "Update badges & reports"
         git push
+    
+    # Step 6: Fail if the tests Failed
+    - name: Check pylint score
+      if: ${{ steps.pylint.outputs.pylint_score < steps.thresholds.outputs.pylint_threshold }}
+      run: |
+        exit 1

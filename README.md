@@ -74,12 +74,12 @@ To install and set up the project locally, follow these steps:
 
 4. Set up the environment variables:
 
-- **`DATA_RETENTION_DAYS`:** Default data retention period for users. Default is `30`.
+- **`DATA_RETENTION_DAYS`:** Default data retention period for users. Default is `"30"`.
 - **`ADMIN_SECRET_KEY`:** Secret key for admin operations. Default is `changethis`. An alert will be raised if the secret key is set to the default value.
 - **`ENVIRONMENT`:** Provide the stage of the application. Possible values are `local` and `production`. Default is `local` and will not block if the secret key is set to the default value (in production it will block).
 
     ```bash
-    DATA_RETENTION_DAYS=10
+    DATA_RETENTION_DAYS="10"
     ADMIN_SECRET_KEY="your_admin_secret_key"
     ENVIRONMENT="production"
     ```
@@ -89,7 +89,7 @@ To install and set up the project locally, follow these steps:
 The application uses Pydantic to manage environment variables. The configuration variables can be defined in the .env file or passed as environment variables. Key configuration options include:
 
 `PROJECT_NAME`: The name of the project. Default is `Ko-fi API`.
-`DATA_RETENTION_DAYS`: Default data retention period for users. Default is `30`.
+`DATA_RETENTION_DAYS`: Default data retention period for users. Default is `"30"`.
 `DATABASE_URL`: The database connection URL (e.g., SQLite, PostgreSQL). Default is `sqlite:///./KoFi.db`.
 `ADMIN_SECRET_KEY`: Secret key for admin operations. Default is `changethis`.
 `ENVIRONMENT`: The environment in which the app is running (local, production). Default is `local`.
