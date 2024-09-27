@@ -71,7 +71,7 @@ jobs:
         if [ "${{ steps.pylint_run.outcome }}" == "failure" ]; then
           echo "FAIL"
           anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -s /10 -f img/pylint_badge.svg -o -c red
-        elif [ "${{ steps.pylint_run.outcome }}" == "success" }} ]; then
+        elif [ "${{ steps.pylint_run.outcome }}" == "success" ]; then
           echo "PASS"
           anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -s /10 -f img/pylint_badge.svg -o pylint
         fi
