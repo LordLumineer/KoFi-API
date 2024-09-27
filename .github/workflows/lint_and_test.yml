@@ -51,7 +51,6 @@ jobs:
         echo "Pylint score is: $pylint_score/10"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
         if [ $pylint_score -lt ${{ steps.thresholds.outputs.pylint_threshold }} ]; then
-          echo "FAIL"
           exit 1
         fi
       continue-on-error: true  # Do not fail the job yet
@@ -59,7 +58,7 @@ jobs:
     # Step 6: Fail if pylint score is below threshold
     - name: Check pylint score
       id: pylint_check
-      if: ${{ steps.pylint_run.outputs.pylint_score < steps.thresholds.outputs.pylint_threshold }}
+      if: ${{ steps.pylint_run.outcome == 'failure' }}
       run: |
         echo "Pylint score is below the required threshold. ${{ steps.pylint_run.outputs.pylint_score }}/10 (required >${{ steps.thresholds.outputs.pylint_threshold }}/10)"
         echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV  # Mark that one check failed
@@ -68,10 +67,10 @@ jobs:
     - name: Generate PyLint Badge
       id: pylint_generate
       run: |
-        if [ ${{ steps.pylint_run.outcome == 'failure' }} ]; then
+        if ${{ steps.pylint_run.outcome == 'failure' }}; then
           echo "FAIL"
           anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -s /10 -f img/pylint_badge.svg -o -c red
-        elif [ ${{ steps.pylint_run.outcome == 'success' }} ]; then
+        elif ${{ steps.pylint_run.outcome == 'success' }}; then
           echo "PASS"
           anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -s /10 -f img/pylint_badge.svg -o pylint
         fi
