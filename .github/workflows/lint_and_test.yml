@@ -37,17 +37,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install anybadge
-        cd app
-        pip install -r requirements.txt
-        pip install -r test/requirements-dev.txt
+        pip install -r app/requirements.txt
+        pip install -r app/test/requirements-dev.txt
 
   # ---------- PYLINT ---------- #
     # Step 5: Run pylint and calculate the score
     - name: Run pylint
       id: pylint_run
       run: |
-        cd app
-        pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:../reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
+        pylint_score=$(pylint app/ --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
         pylint_score=$(echo "$pylint_score" | xargs)  # Ensure no leading/trailing whitespace
         echo "Pylint score is: $pylint_score/10"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
@@ -81,7 +79,7 @@ jobs:
     - name: Run PyTest with Coverage
       id: pytest_run
       run: |
-        coverage run -m pytest --tb=no --json-report --json-report-summary --json-report-indent=4 --json-report-file=../reports/pytest.json
+        coverage run -m pytest --tb=no --json-report --json-report-summary --json-report-indent=4 --json-report-file=reports/pytest.json
       continue-on-error: true  # Do not fail the job yet
     
     # Step 8: Check pytest result based on exit code
