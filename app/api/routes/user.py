@@ -86,6 +86,18 @@ def update_user(
     latest_request_at = None,
     db: Session = Depends(get_db),
 ):
+    """
+    Update a Ko-fi user by their verification token.
+
+    Args:
+        verification_token: The verification token of the user to update.
+        days: The new data retention days, or None to leave unchanged.
+        latest_request_at: The new latest request at, or None to leave unchanged.
+        db: The database session, provided by the dependency injection system.
+
+    Returns:
+        The updated user object, represented as a KofiUser instance.
+    """
     user = db.query(KofiUser).filter(
         KofiUser.verification_token == verification_token
     ).first()

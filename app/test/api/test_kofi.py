@@ -1,46 +1,25 @@
-"""./app/test/api/test_kofi.py"""
+"""
+Test cases for the Ko-fi donation API endpoints.
+
+@file: ./app/test/api/test_kofi.py
+@date: 2024-09-27
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 import copy
 import json
-import pytest
+from unittest.mock import patch
 from fastapi.testclient import TestClient
-from unittest.mock import patch, MagicMock
-from app.api.routes.kofi import router
-from app.core.models import KofiTransaction, KofiTransactionSchema, KofiUser
+
+from app.core.models import KofiTransaction, KofiUser
 from app.main import app
+from app.test.conftest import basic_mock_transaction, basic_mock_user
 
 client = TestClient(app)
-
-basic_mock_transaction = KofiTransaction(
-    verification_token="test_token",
-    message_id="12345",
-    timestamp="2024-09-25T12:34:56",
-    type="Donation",
-    is_public=True,
-    from_name="John Doe",
-    message="Great work!",
-    amount="5.00",
-    url="https://ko-fi.com/some-url",
-    email="john.doe@example.com",
-    currency="USD",
-    is_subscription_payment=False,
-    is_first_subscription_payment=False,
-    kofi_transaction_id="txn_123",
-    shop_items=None,
-    tier_name=None,
-    shipping=None
-)
-
-basic_mock_user = KofiUser(
-    verification_token="test_token",
-    data_retention_days=30,
-    latest_request_at="2024-09-25T12:34:56",
-    prefered_currency="USD"
-)
 
 # --------------- Test Webhook Endpoint ---------------
 
 
-def test_webhook_transaction_success(mock_db_session):
+def test_webhook_transaction_success(mock_db_session):  #pylint: disable=W0613, W0621
     """Test receiving a valid Ko-fi transaction through the webhook."""
     transaction_data = {
         "verification_token": "test_token",
@@ -76,7 +55,7 @@ def test_webhook_invalid_json():
     assert "Invalid JSON format" in response.json()["detail"]
 
 
-def test_webhook_invalid_transaction_data(mock_db_session):
+def test_webhook_invalid_transaction_data(mock_db_session): #pylint: disable=W0613, W0621
     """Test validation errors for missing fields in the transaction data."""
     invalid_data = {
         "verification_token": "test_token",

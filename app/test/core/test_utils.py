@@ -1,8 +1,15 @@
-"""./app/test/core/test_utils.py"""
-import httpx
-import pytest
+"""
+Test cases for the utility functions in the Ko-fi donation API.
+
+@file: ./app/test/core/test_utils.py
+@date: 2024-09-27
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 from unittest.mock import patch, MagicMock
 from fastapi import HTTPException
+import httpx
+import pytest
+
 from app.core.utils import currency_converter
 
 

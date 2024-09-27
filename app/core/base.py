@@ -7,6 +7,8 @@ The base class for all SQLAlchemy models.
 """
 from sqlalchemy.orm import DeclarativeBase
 
+# pylint: disable=R0903
+
 
 class Base(DeclarativeBase):
     """

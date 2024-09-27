@@ -46,7 +46,10 @@ def receive_kofi_transaction(
     try:
         transaction = json.loads(data)
     except json.JSONDecodeError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid JSON format, error: {e}" + str(e)) from e
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid JSON format, error: {e}" + str(e)
+        ) from e
 
     # Validate the data
     try:
@@ -92,7 +95,8 @@ def get_transactions(verification_token: str, db: Session = Depends(get_db)):
         KofiTransaction.verification_token == verification_token
     ).all()
     if not transactions:
-        raise HTTPException(status_code=404, detail="Invalid verification token")
+        raise HTTPException(
+            status_code=404, detail="Invalid verification token")
     return transactions
 
 
@@ -152,56 +156,84 @@ def get_transactions_total(
     except AssertionError as e:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid 'method' parameter ({method}). Expected 'total', 'recent', or 'latest'.") from e
+            detail=f"Invalid 'method' parameter ({
+                method}). Expected 'total', 'recent', or 'latest'."
+        ) from e
 
     user = get_user(verification_token, db=db)
     if not user:
-        raise HTTPException(status_code=404, detail="Invalid verification token")
+        raise HTTPException(
+            status_code=404, detail="Invalid verification token")
 
-    data = {}
-    match method:
-        case 'total':
-            data = db.query(KofiTransaction).filter(
-                KofiTransaction.verification_token == verification_token
-            ).all()
-
-        case 'recent':
-            if since:
-                try:
-                    datetime.fromisoformat(since)
-                except (ValueError, TypeError) as e:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="Invalid 'since' parameter. Expected ISO 8601 format."
-                    ) from e
-            else:
-                since = user.latest_request_at
-            data = db.query(KofiTransaction).filter(
-                KofiTransaction.verification_token == verification_token,
-                KofiTransaction.timestamp >= since
-            ).all()
-            update_user(
-                verification_token,
-                latest_request_at=datetime.now(
-                    timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-                db=db
-            )
-
-        case 'latest':
-            data = db.query(KofiTransaction).filter(
-                KofiTransaction.verification_token == verification_token
-            ).all()
-            latest = data[0]
-            for d in data:
-                if d.timestamp > latest.timestamp:
-                    latest = d
-            data = [latest]
-        case _:
-            return 0
+    data = get_transactions_data(method, user, since, db)
 
     if not currency:
         currency = user.prefered_currency
 
+    return convert_currency(data, currency)
+
+
+def get_transactions_data(method: str, user: KofiUser, since: str | None, db: Session):
+    """
+    Get the transactions data for a given user, depending on the 'method' parameter.
+
+    'total' returns all transactions for the user.
+    'recent' returns all transactions since the 'since' parameter (ISO 8601 format).
+    'latest' returns only the latest transaction.
+
+    If the 'since' parameter is not provided, the user's latest request will be used.
+    """
+    if method == 'total':
+        data = db.query(KofiTransaction).filter(
+            KofiTransaction.verification_token == user.verification_token
+        ).all()
+
+    elif method == 'recent':
+        if since:
+            try:
+                datetime.fromisoformat(since)
+            except (ValueError, TypeError) as e:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Invalid 'since' parameter. Expected ISO 8601 format."
+                ) from e
+        else:
+            since = user.latest_request_at
+        data = db.query(KofiTransaction).filter(
+            KofiTransaction.verification_token == user.verification_token,
+            KofiTransaction.timestamp >= since
+        ).all()
+        update_user(
+            user.verification_token,
+            latest_request_at=datetime.now(
+                timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            db=db
+        )
+
+    elif method == 'latest':
+        data = db.query(KofiTransaction).filter(
+            KofiTransaction.verification_token == user.verification_token
+        ).all()
+        latest = data[0]
+        for d in data:
+            if d.timestamp > latest.timestamp:
+                latest = d
+        data = [latest]
+
+    return data
+
+
+def convert_currency(data, currency):
+    """
+    Convert a list of transactions to a total amount in a specific currency.
+
+    Args:
+        data: A list of transactions.
+        currency: The currency to convert the transactions to.
+
+    Returns:
+        The total amount of all transactions in the given currency.
+    """
     currencies = {}
     for transaction in data:
         # Conversion str to float

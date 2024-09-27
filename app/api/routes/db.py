@@ -5,10 +5,8 @@ API endpoints for Ko-fi database management.
 @date: 2024-09-22
 @author: Lord Lumineer (lordlumineer@gmail.com)
 """
-import os
-
 from datetime import datetime, timezone
-from fastapi import APIRouter, BackgroundTasks, Form, UploadFile, Depends, File
+from fastapi import APIRouter, BackgroundTasks, UploadFile, Depends, File
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session

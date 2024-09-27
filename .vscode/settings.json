@@ -8,5 +8,9 @@
         "**/Thumbs.db": true
     },
     "hide-files.files": [],
-    "todo-tree.tree.scanMode": "workspace only"
+    "todo-tree.tree.scanMode": "workspace only",
+    "pylint.cwd": "${workspaceFolder}/app",
+    "autopep8.args": [
+        "--max-line-length=115"
+    ]
 }

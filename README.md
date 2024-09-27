@@ -1,14 +1,28 @@
+<div align="center">
+
+![KoFi-API logo](./img/bitmap.svg "KoFi-API logo")
+
 # KoFi-API
+
+An API to store and access Ko-fi donations
+
+<!-- Badges -->
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Lint and Test](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test.yml/badge.svg?branch=Master)](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test.yml)
 
 [![Pytest](./img/pytest_badge.svg)](./reports/pytest.md)
 [![Pylint Score](./img/pylint_badge.svg)](./reports/pylint.txt)
 [![Coverage](./img/coverage_badge.svg)](./reports/coverage.txt)
+</div>
+
+## About Ko-fi API
 
 Ko-fi Donation API is a FastAPI-based system that allows users to manage Ko-fi donations, users, and transactions. It provides a set of API endpoints for handling donations, exporting and importing the database, and admin-specific operations like managing users and transactions.
 
 ## Table of Contents
 
 - [KoFi-API](#kofi-api)
+  - [About Ko-fi API](#about-ko-fi-api)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Requirements](#requirements)
@@ -154,7 +168,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-That's it! You're all set up to use and contribute to the Ko-fi Donation API.
+That's it! You're all set up to use the Ko-fi API.
 
 ## Useful CMD
 

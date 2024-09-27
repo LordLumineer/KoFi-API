@@ -1,12 +1,9 @@
-name: Lint and Test
+name: Lint and Test - Pull Request
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   lint-and-test:
@@ -28,8 +25,8 @@ jobs:
     - name: Set up thresholds
       id: thresholds
       run: |
-        echo "pylint_threshold=8" >> $GITHUB_OUTPUT
-        echo "coverage_threshold=80" >> $GITHUB_OUTPUT
+        echo "pylint_threshold=9.5" >> $GITHUB_OUTPUT
+        echo "coverage_threshold=85" >> $GITHUB_OUTPUT
         echo "ALL_CHECKS_PASSED=true" >> $GITHUB_ENV  # Initialize with true
 
     # Step 4: Install dependencies (including Anybadge)
@@ -45,7 +42,7 @@ jobs:
     - name: Run pylint
       id: pylint_run
       run: |
-        pylint_score=$(pylint app/ --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=parseable | tee reports/pylint.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
+        pylint_score=$(pylint app --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --rcfile=app/.pylintrc --output-format=parseable | tee reports/pylint.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
         pylint_score=$(echo "$pylint_score" | xargs)  # Ensure no leading/trailing whitespace
         echo "Pylint score is: $pylint_score/10"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
@@ -79,7 +76,7 @@ jobs:
     - name: Run PyTest with Coverage
       id: pytest_run
       run: |
-        coverage run -m pytest --tb=no --md-report --md-report-output=reports/pytest.md --md-report-flavor=gfm
+        coverage run -m pytest --tb=no --md-report --md-report-output=reports/pytest.md
       continue-on-error: true  # Do not fail the job yet
     
     # Step 9: Check pytest result based on exit code
@@ -146,17 +143,8 @@ jobs:
           reports/pylint.txt
           reports/pytest.md
           reports/coverage.txt
-
-    # (Optional) Step 15: Commit the badges to the repo if you want them automatically updated
-    - name: Commit badges
-      run: |
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions"
-        git add img/pylint_badge.svg img/coverage_badge.svg img/pytest_badge.svg reports/pylint.txt reports/coverage.txt reports/pytest.md
-        git commit -m "Update badges & reports"
-        git push
     
-    # Step 16: Fail if the tests Failed
+    # Step 15: Fail if the tests Failed
     - name: Check Test Result
       if: env.ALL_CHECKS_PASSED == 'false'
       run: |
