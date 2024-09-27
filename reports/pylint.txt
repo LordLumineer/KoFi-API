@@ -187,11 +187,9 @@ basic_mock_user = KofiUser(
     prefered_currency="USD"
 )
 
-# --------------- Test Webhook Endpoint ---------------
-
-
-def test_webhook_transaction_success(mock_db_session):
-    """Test receiving a valid Ko-fi transaction through the webhook."""
+@pytest.fixture
+def mock_settings(monkeypatch):
+    """Fixture to mock settings with valid admin secret key."""
 app/api/routes/__init__.py:1: [R0801(duplicate-code), ] Similar lines in 2 files
 ==app.test.api.test_kofi:[23:32]
 ==app.test.core.test_models:[101:111]
@@ -218,12 +216,12 @@ app/api/routes/__init__.py:1: [R0801(duplicate-code), ] Similar lines in 2 files
 app/api/routes/__init__.py:1: [R0801(duplicate-code), ] Similar lines in 2 files
 ==app.test.api.test_kofi:[13:19]
 ==app.test.core.test_models:[91:97]
-    verification_token="test_token",
-    message_id="12345",
-    timestamp="2024-09-25T12:34:56",
-    type="Donation",
-    is_public=True,
-    from_name="John Doe",
+        verification_token="test_token",
+        message_id="12345",
+        timestamp="2024-09-25T12:34:56",
+        type="Donation",
+        is_public=True,
+        from_name="John Doe",
 
 -----------------------------------
 Your code has been rated at 8.33/10
