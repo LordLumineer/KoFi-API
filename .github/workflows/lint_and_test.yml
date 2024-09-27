@@ -28,7 +28,7 @@ jobs:
     - name: Set up thresholds
       id: thresholds
       run: |
-        echo "pylint_threshold=5" >> $GITHUB_OUTPUT
+        echo "pylint_threshold=9" >> $GITHUB_OUTPUT
         echo "coverage_threshold=50" >> $GITHUB_OUTPUT
         echo "ALL_CHECKS_PASSED=true" >> $GITHUB_ENV  # Initialize with true
 
