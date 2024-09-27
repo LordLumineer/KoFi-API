@@ -52,6 +52,7 @@ def currency_converter(amount: float, from_currency: str, to_currency: str) -> f
     converted_amount = amount * exchange_rate
     return converted_amount
 
+
 def remove_file(file_path: str):
     """Background task to delete the file after sending it."""
     if os.path.exists(file_path):

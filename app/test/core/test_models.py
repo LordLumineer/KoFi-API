@@ -1,10 +1,16 @@
-"""./app/test/core/test_models.py"""
-from unittest.mock import MagicMock
-from sqlalchemy.orm import Session
+"""
+Test cases for the Ko-fi transaction data and user data models.
+
+@file: ./app/test/core/test_models.py
+@date: 2024-09-27
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
+# from unittest.mock import MagicMock
+# from sqlalchemy.orm import Session
 import pytest
 from pydantic import ValidationError
-from app.core.config import settings
-from app.core.models import KofiTransactionSchema, KofiUserSchema, KofiTransaction, KofiUser
+from app.core.models import KofiTransactionSchema, KofiUserSchema, KofiUser
+from app.test.conftest import basic_mock_transaction
 
 
 # --------------- Tests for Pydantic Schemas ----------------
@@ -13,11 +19,11 @@ def test_kofi_transaction_schema_success():
     """Test successful validation of KofiTransactionSchema."""
     transaction_data = {
         "verification_token": "test_token",
-        "message_id": "12345",
+        "message_id": "98765",
         "timestamp": "2024-09-25T12:34:56",
         "type": "Donation",
         "is_public": True,
-        "from_name": "John Doe",
+        "from_name": "Jane Does",
         "message": "Keep up the good work!",
         "amount": "5.00",
         "url": "https://ko-fi.com/some-url",
@@ -33,7 +39,7 @@ def test_kofi_transaction_schema_success():
 
     schema = KofiTransactionSchema(**transaction_data)
     assert schema.verification_token == "test_token"
-    assert schema.message_id == "12345"
+    assert schema.message_id == "98765"
     assert schema.amount == "5.00"
     assert schema.is_public is True
     assert schema.model_dump()["shipping"] == {}
@@ -85,28 +91,10 @@ def test_kofi_user_schema_invalid_data():
 def test_kofi_transaction_model_defaults():
     """Test that KofiTransaction model has correct field types and defaults."""
     # Mocking a SQLAlchemy session
-    mock_session = MagicMock(spec=Session)
+    # mock_session = MagicMock(spec=Session)
 
     # Creating a KofiTransaction instance
-    transaction = KofiTransaction(
-        verification_token="test_token",
-        message_id="12345",
-        timestamp="2024-09-25T12:34:56",
-        type="Donation",
-        is_public=True,
-        from_name="John Doe",
-        message="Keep up the good work!",
-        amount="5.00",
-        url="https://ko-fi.com/some-url",
-        email="johndoe@example.com",
-        currency="USD",
-        is_subscription_payment=False,
-        is_first_subscription_payment=False,
-        kofi_transaction_id="txn_123",
-        shop_items=None,  # Pickled list
-        tier_name=None,
-        shipping=None  # Pickled dict
-    )
+    transaction = basic_mock_transaction
 
     # Assert values are correctly mapped
     assert transaction.verification_token == "test_token"
@@ -117,7 +105,7 @@ def test_kofi_transaction_model_defaults():
 def test_kofi_user_model_defaults():
     """Test that KofiUser model has correct defaults for specific fields."""
     # Mocking a SQLAlchemy session
-    mock_session = MagicMock(spec=Session)
+    # mock_session = MagicMock(spec=Session)
 
     # Creating a KofiUser instance
     user = KofiUser(**KofiUserSchema(

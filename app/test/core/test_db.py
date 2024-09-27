@@ -1,8 +1,12 @@
-"""./app/test/core/test_db.py"""
-import pytest
+"""
+Test cases for the database session lifecycle management and database management functions.
+
+@file: ./app/test/core/test_db.py
+@date: 2024-09-27
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 from unittest.mock import patch, MagicMock
-from sqlalchemy.orm import Session
-from app.core.db import get_db, remove_expired_transactions, run_migrations, handle_database_import, export_db
+from app.core.db import get_db  # , remove_expired_transactions, run_migrations, handle_database_import, export_db
 
 
 # --------------- Test get_db ---------------
@@ -28,7 +32,7 @@ def test_get_db():
         mock_session.close.assert_called_once()
 
 
-# --------------- Test remove_expired_transactions --------------- 
+# --------------- Test remove_expired_transactions ---------------
 # @patch("app.core.db.get_db")# BUG
 # def test_remove_expired_transactions(mock_get_db):
 #     """Test the removal of expired transactions based on user retention policy."""

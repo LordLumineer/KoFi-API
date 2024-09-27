@@ -1,11 +1,20 @@
-import pytest
+"""
+Test cases for the main FastAPI application.
+
+@file: ./app/test/test_main.py
+@date: 2024-09-27
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 from unittest.mock import patch, MagicMock
-from fastapi.testclient import TestClient
-from app.main import app, custom_generate_unique_id
 from fastapi.routing import APIRoute
+from fastapi.testclient import TestClient
+import pytest
+
+from app.main import app, custom_generate_unique_id
 
 # Initialize the FastAPI TestClient
 client = TestClient(app)
+
 
 # Test the /ping endpoint
 
@@ -34,9 +43,8 @@ def test_custom_generate_unique_id():
 @pytest.mark.asyncio(loop_scope="session")
 @patch("app.main.run_migrations")
 @patch("app.main.remove_expired_transactions")
-async def test_lifespan(mock_remove_expired_transactions, mock_run_migrations):
+async def test_lifespan(mock_remove_expired_transactions, mock_run_migrations):  # pylint: disable=W0613, W0621
     """Test the lifespan function to ensure startup and shutdown behavior."""
-
     # Mock scheduler behavior
     with patch("app.main.BackgroundScheduler.start") as mock_scheduler_start, \
             patch("app.main.BackgroundScheduler.shutdown") as mock_scheduler_shutdown:

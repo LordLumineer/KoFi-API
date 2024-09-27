@@ -1,20 +1,32 @@
-"""./app/test/api/test_user.py"""
-import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy.exc import IntegrityError
+"""
+Test cases for the user API endpoints.
+
+@file: ./app/test/api/test_user.py
+@date: 2024-09-27
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 from unittest.mock import patch, MagicMock
-from app.api.routes.user import router
+from fastapi.testclient import TestClient
+import pytest
+
 from app.core.models import KofiUser, KofiTransaction
-from app.core.db import get_db
-from app.core.config import settings
 from app.main import app
 
 # Create a TestClient for the FastAPI app
 client = TestClient(app)
 
 # Mocking database dependency
+
+
 @pytest.fixture
 def mock_db_session():
+    """Fixture to mock the database session dependency.
+
+    Yields a mock Session object from sqlalchemy.orm, which is returned by get_db().
+    The mock is configured to be used as a context manager, so when the test needs
+    to access the database, the mock session is returned as an iterator.
+    """
+
     with patch("app.core.db.get_db") as mock_get_db:
         mock_session = MagicMock()
         mock_get_db.return_value = iter([mock_session])
@@ -22,7 +34,7 @@ def mock_db_session():
 
 
 # --------------- Test Create User Endpoint ---------------
-def test_create_user_success(mock_db_session):
+def test_create_user_success(mock_db_session):  # pylint: disable=W0613, W0621
     """Test creating a user successfully."""
     mock_user = MagicMock(spec=KofiUser)
     mock_user.verification_token = "test_token"
@@ -39,7 +51,7 @@ def test_create_user_success(mock_db_session):
     assert response.json()["verification_token"] == "test_token"
 
 
-def test_create_user_existing_user(mock_db_session):
+def test_create_user_existing_user(mock_db_session):  # pylint: disable=W0613, W0621
     """Test creating a user with an existing verification token."""
     mock_user = MagicMock(spec=KofiUser)
     mock_db_session.query(KofiUser).filter_by.return_value.first.return_value = mock_user
@@ -51,7 +63,7 @@ def test_create_user_existing_user(mock_db_session):
 
 
 # --------------- Test Get User Endpoint ---------------
-def test_get_user_success(mock_db_session):
+def test_get_user_success(mock_db_session):  # pylint: disable=W0613, W0621
     """Test retrieving a user successfully."""
     mock_user = MagicMock(spec=KofiUser)
     mock_user.verification_token = "test_token"
@@ -65,7 +77,7 @@ def test_get_user_success(mock_db_session):
     assert response.json()["verification_token"] == "test_token"
 
 
-def test_get_user_not_found(mock_db_session):
+def test_get_user_not_found(mock_db_session):  # pylint: disable=W0613, W0621
     """Test retrieving a non-existent user."""
     mock_db_session.query(KofiUser).filter_by.return_value.first.return_value = None
 
@@ -76,7 +88,7 @@ def test_get_user_not_found(mock_db_session):
 
 
 # --------------- Test Update User Endpoint ---------------
-def test_update_user_success(mock_db_session):
+def test_update_user_success(mock_db_session):  # pylint: disable=W0613, W0621
     """Test updating a user's data retention days successfully."""
     mock_user = MagicMock(spec=KofiUser)
     mock_db_session.query(KofiUser).filter_by.return_value.first.return_value = mock_user
@@ -88,7 +100,7 @@ def test_update_user_success(mock_db_session):
     # mock_db_session.commit.assert_called_once()# BUG
 
 
-def test_update_user_not_found(mock_db_session):
+def test_update_user_not_found(mock_db_session):  # pylint: disable=W0613, W0621
     """Test updating a non-existent user."""
     mock_db_session.query(KofiUser).filter_by.return_value.first.return_value = None
 
@@ -99,7 +111,7 @@ def test_update_user_not_found(mock_db_session):
 
 
 # --------------- Test Delete User Endpoint ---------------
-def test_delete_user_success(mock_db_session):
+def test_delete_user_success(mock_db_session):  # pylint: disable=W0613, W0621
     """Test deleting a user and their associated transactions successfully."""
     mock_user = MagicMock(spec=KofiUser)
     mock_db_session.query(KofiUser).filter_by.return_value.first.return_value = mock_user
@@ -113,7 +125,7 @@ def test_delete_user_success(mock_db_session):
     # mock_db_session.commit.assert_called()# BUG
 
 
-def test_delete_user_not_found(mock_db_session):
+def test_delete_user_not_found(mock_db_session):  # pylint: disable=W0613, W0621
     """Test deleting a non-existent user."""
     mock_db_session.query(KofiUser).filter_by.return_value.first.return_value = None
 

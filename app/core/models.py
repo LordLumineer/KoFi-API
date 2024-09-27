@@ -6,8 +6,7 @@ Models for Ko-fi transaction data and user data.
 @author: Lord Lumineer (lordlumineer@gmail.com)
 """
 from datetime import datetime, timezone
-from typing import Self
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 from sqlalchemy import PickleType
 from sqlalchemy.ext.mutable import MutableList, MutableDict
@@ -15,6 +14,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.base import Base
 from app.core.config import settings
+
+# pylint: disable=R0903
 
 
 class KofiTransactionSchema(BaseModel):
@@ -69,13 +70,15 @@ class KofiTransaction(Base):
     shipping: Mapped[PickleType | None] = mapped_column(
         MutableDict.as_mutable(PickleType))
 
+
 class KofiUserSchema(BaseModel):
     """
     Schemas for User data.
     """
     verification_token: str
     data_retention_days: int = Field(default=settings.DATA_RETENTION_DAYS)
-    latest_request_at: str = Field(default=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'))
+    latest_request_at: str = Field(default=datetime.now(
+        timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'))
     prefered_currency: str = Field(default="USD")
 
     class Config:
@@ -87,7 +90,9 @@ class KofiUser(Base):
     """Ko-fi users model."""
     __tablename__ = "kofi_users"
 
-    verification_token: Mapped[str] = mapped_column(primary_key=True, index=True)
-    data_retention_days: Mapped[int] = mapped_column(default=settings.DATA_RETENTION_DAYS)
+    verification_token: Mapped[str] = mapped_column(
+        primary_key=True, index=True)
+    data_retention_days: Mapped[int] = mapped_column(
+        default=settings.DATA_RETENTION_DAYS)
     latest_request_at: Mapped[str]
     prefered_currency: Mapped[str] = mapped_column(default="USD")

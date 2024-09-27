@@ -5,8 +5,8 @@
 | app/test/api/test_kofi.py    |     10 |       10 |
 | app/test/api/test_user.py    |      8 |        8 |
 | app/test/core/test_base.py   |      1 |        1 |
-| app/test/core/test_bd.py     |      1 |        1 |
 | app/test/core/test_config.py |      5 |        5 |
+| app/test/core/test_db.py     |      1 |        1 |
 | app/test/core/test_models.py |      6 |        6 |
 | app/test/core/test_utils.py  |      4 |        4 |
 | app/test/test_main.py        |      3 |        3 |

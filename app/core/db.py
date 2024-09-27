@@ -6,16 +6,15 @@ Database module for Ko-fi donation API.
 @author: Lord Lumineer (lordlumineer@gmail.com)
 """
 import logging
-from math import e
 import os
 from datetime import datetime, timedelta
 import shutil
 from typing import Generator
+from fastapi import HTTPException
+from sqlalchemy import Connection, Inspector, MetaData, Table, create_engine, inspect, select, text
+from sqlalchemy.orm import Session, sessionmaker
 from alembic import command
 from alembic.config import Config
-from fastapi import HTTPException
-from sqlalchemy import MetaData, Table, create_engine, inspect, select, text
-from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.models import KofiTransaction, KofiUser
 from app.core.config import settings, logger
@@ -109,88 +108,125 @@ async def handle_database_import(uploaded_db_path: str, mode: str) -> bool:
 
     After the import is complete, the uploaded database file is removed.
     """
-    # Connect to the uploaded SQLite database
-    upload_engine = create_engine(f"sqlite:///{uploaded_db_path}")
-    upload_conn = upload_engine.connect()
+    upload_conn, upload_engine = await connect_to_uploaded_db(uploaded_db_path)
+    inspector, upload_inspector = await get_inspectors(upload_conn)
 
-    # Get the metadata and inspector of the running and uploaded databases
+    with Session(engine) as session:
+        for table_name in inspector.get_table_names():
+            if table_name not in upload_inspector.get_table_names():
+                # Skip tables not present in the uploaded database
+                continue
+
+            await process_table(session, table_name, upload_conn, inspector, mode)
+
+    await upload_conn.close()
+    await upload_engine.dispose()
+    return True
+
+
+async def connect_to_uploaded_db(uploaded_db_path: str) -> Connection:
+    """
+    Connect to the uploaded SQLite database.
+    """
+    new_engine = create_engine(f"sqlite:///{uploaded_db_path}")
+    new_conn = new_engine.connect()
+    return new_conn, new_engine
+
+
+async def get_inspectors(upload_conn: Connection) -> tuple[Inspector, Inspector]:
+    """
+    Get the metadata and inspector of the running and uploaded databases.
+    """
     meta = MetaData()
     meta.reflect(bind=engine)
 
     upload_meta = MetaData()
-    upload_meta.reflect(bind=upload_engine)
+    upload_meta.reflect(bind=upload_conn)
 
-    inspector = inspect(engine)  # Inspect the running DB
-    upload_inspector = inspect(upload_engine)  # Inspect the uploaded DB
+    inspector = inspect(engine)
+    upload_inspector = inspect(upload_conn)
 
-    with Session(engine) as session:
-        with upload_conn:
-            for table_name in inspector.get_table_names():
-                if table_name not in upload_inspector.get_table_names():
-                    # Skip tables not present in the uploaded database
-                    continue
+    return inspector, upload_inspector
 
-                # Compare columns in both databases
-                columns_existing = [col['name']
-                                    for col in inspector.get_columns(table_name)]
-                # columns_uploaded = [col['name']
-                #                     for col in upload_inspector.get_columns(table_name)]
 
-                # Create a SQLAlchemy Table object for both DBs
-                table_existing = Table(table_name, meta, autoload_with=engine)
-                table_uploaded = Table(
-                    table_name, upload_meta, autoload_with=upload_engine)
+async def process_table(
+    session: Session,
+    table_name: str,
+    upload_conn: Connection,
+    inspector: Inspector,
+    # upload_inspector: Inspector,
+    mode: str
+) -> None:
+    """
+    Process a table by comparing rows based on primary keys.
 
-                # Compare rows based on primary keys
-                
-                primary_keys = inspector.get_pk_constraint(table_name).get('constrained_columns')
-                
-                stmt_existing = select(table_existing)
-                stmt_uploaded = select(table_uploaded)
-                
-                rows_existing = {tuple([row[key] for key in primary_keys]):
-                                 row for row in session.execute(stmt_existing).mappings()}
-                # rows_existing = {}
-                # for row in session.execute(stmt_existing).mappings():
-                    # rows_existing[tuple([row[key] for key in primary_keys])] = row
+    The function takes a session, table name, inspectors of the running and uploaded
+    databases, and a mode string as arguments.
 
-                rows_uploaded = {tuple([row[key] for key in primary_keys]):
-                                 row for row in upload_conn.execute(stmt_uploaded).mappings()}
+    If a row does not exist in the current database, it will be added. If a row exists, its
+    data will be replaced with the data from the uploaded database if the data is different.
+    """
+    primary_keys = inspector.get_pk_constraint(table_name).get('constrained_columns')
 
-                # Add or update rows based on mode
-                for pk, row_uploaded in rows_uploaded.items():
-                    if pk not in rows_existing:
-                        # Row does not exist in the existing DB, add it
-                        new_row = {
-                            key: row_uploaded[key] for key in columns_existing if key in row_uploaded}
-                        session.execute(table_existing.insert().values(new_row))
-                    else:
-                        # Row exists, check data differences
-                        row_existing = rows_existing[pk]
-                        for col in columns_existing:
-                            if col in row_uploaded and col in row_existing:
-                                if mode == "recover":
-                                    # In 'recover', replace data if different
-                                    if row_uploaded[col] is not None and row_uploaded[col] != row_existing[col]:
-                                        session.execute(table_existing.update().where(
-                                            table_existing.c[primary_keys[0]
-                                                             ] == pk[0]
-                                        ).values({col: row_uploaded[col]}))
-                                elif mode == "import":
-                                    # In 'import', do not replace existing data
-                                    if row_existing[col] is None and row_uploaded[col] is not None:
-                                        session.execute(table_existing.update().where(
-                                            table_existing.c[primary_keys[0]
-                                                             ] == pk[0]
-                                        ).values({col: row_uploaded[col]}))
+    stmt_existing = select(Table(table_name, MetaData(), autoload_with=engine))
+    stmt_uploaded = select(Table(table_name, MetaData(), autoload_with=upload_conn))
 
-        # Commit changes
-        session.commit()
+    rows_existing = {tuple(row[key] for key in primary_keys):
+                     row for row in session.execute(stmt_existing).mappings()}
 
-    # Clean up the uploaded database file
-    upload_conn.close()
-    upload_engine.dispose()
-    return True
+    rows_uploaded = {tuple(row[key] for key in primary_keys):
+                     row for row in upload_conn.execute(stmt_uploaded).mappings()}
+
+    for pk, row_uploaded in rows_uploaded.items():
+        if pk not in rows_existing:
+            # Row does not exist in the existing DB, add it
+            new_row = {
+                key: row_uploaded[key] for key in inspector.get_columns(table_name)}
+            session.execute(
+                Table(table_name, MetaData(), autoload_with=engine).insert().values(new_row))
+        else:
+            # Row exists, check data differences
+            row_existing = rows_existing[pk]
+            for col in inspector.get_columns(table_name):
+                if col in row_uploaded and col in row_existing:
+                    if mode == "recover" and (
+                        row_uploaded[col] is not None and row_uploaded[col] != row_existing[col]
+                    ):
+                        # In 'recover', replace data if different
+                        session.execute(
+                            Table(table_name, MetaData(), autoload_with=engine).update().where(
+                                Table(table_name, MetaData(), autoload_with=engine).c[primary_keys[0]]
+                                == pk[0]
+                            ).values({col: row_uploaded[col]}))
+                    elif mode == "import" and (
+                        row_existing[col] is None and row_uploaded[col] is not None
+                    ):
+                        # In 'import', do not replace existing data
+                        session.execute(
+                            Table(table_name, MetaData(), autoload_with=engine).update().where(
+                                Table(table_name, MetaData(), autoload_with=engine).c[primary_keys[0]]
+                                == pk[0]
+                            ).values({col: row_uploaded[col]}))
+
+                    # if mode == "recover":
+                    #     # In 'recover', replace data if different
+                    #     if row_uploaded[col] is not None and row_uploaded[col] != row_existing[col]:
+                    #         session.execute(
+                    #             Table(table_name, MetaData(), autoload_with=engine).update().where(
+                    #                 Table(table_name, MetaData(), autoload_with=engine).c[primary_keys[0]]
+                    #                 == pk[0]
+                    #             ).values({col: row_uploaded[col]}))
+                    # elif mode == "import":
+                    #     # In 'import', do not replace existing data
+                    #     if row_existing[col] is None and row_uploaded[col] is not None:
+                    #         session.execute(
+                    #             Table(table_name, MetaData(), autoload_with=engine).update().where(
+                    #                 Table(table_name, MetaData(), autoload_with=engine).c[primary_keys[0]]
+                    #                 == pk[0]
+                    #             ).values({col: row_uploaded[col]}))
+
+    # Commit changes
+    session.commit()
 
 
 async def export_db(db: Session) -> str:
@@ -209,9 +245,9 @@ async def export_db(db: Session) -> str:
     export_path = "./output.db"
     if "sqlite" in str(engine.url):
         # If it's SQLite, serve the actual database file
-        ENGINE_DB_PATH = engine.url.database
-        if os.path.exists(ENGINE_DB_PATH):
-            shutil.copyfile(ENGINE_DB_PATH, export_path)
+        engine_db_path = engine.url.database
+        if os.path.exists(engine_db_path):
+            shutil.copyfile(engine_db_path, export_path)
         else:
             raise HTTPException(
                 status_code=404, detail="SQLite database file not found.")
@@ -230,10 +266,9 @@ async def export_db(db: Session) -> str:
                 result = db.execute(text(f"SELECT * FROM {table.name}"))
                 rows = result.fetchall()
                 if rows:
-                    columns = ", ".join([col for col in result.keys()])
+                    columns = ", ".join(list(result.keys()))
                     for row in rows:
                         values = ", ".join([f"'{str(val)}'" for val in row])
-                        insert_stmt = f"INSERT INTO {
-                            table.name} ({columns}) VALUES ({values});\n"
+                        insert_stmt = f"INSERT INTO {table.name} ({columns}) VALUES ({values});\n"
                         file.write(insert_stmt)
     return export_path

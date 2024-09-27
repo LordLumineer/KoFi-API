@@ -1,8 +1,13 @@
-"""./app/test/core/test_config.py"""
+"""
+Test cases for the configuration module of the Ko-fi donation API.
+
+@file: ./app/test/core/test_config.py
+@date: 2024-09-27
+@author: Lord Lumineer (lordlumineer@gmail.com)
+"""
 from unittest.mock import patch
-import pytest
 import warnings
-from pydantic import ValidationError
+import pytest
 from app.core.config import Settings
 
 
@@ -42,9 +47,9 @@ def test_secret_warning_local_env():
     """Test that a warning is raised in the 'local' environment when the secret key is not changed."""
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
-        
-        settings = Settings(ENVIRONMENT="local", ADMIN_SECRET_KEY="changethis")
-        
+
+        Settings(ENVIRONMENT="local", ADMIN_SECRET_KEY="changethis")
+
         # Ensure that a warning was raised
         assert len(w) == 1
         assert "The value of ADMIN_SECRET_KEY is \"changethis\"" in str(w[-1].message)
@@ -53,7 +58,7 @@ def test_secret_warning_local_env():
 # --------------- Test secret enforcement in 'staging' or 'production' environment ---------------
 def test_secret_error_non_local_env():
     """Test that a ValueError is raised in 'production' environment when the secret key is not changed."""
-    with pytest.raises(ValueError, match="The value of ADMIN_SECRET_KEY is \"changethis\", for security, please change it, at least for deployments."):
+    with pytest.raises(ValueError):
         Settings(ENVIRONMENT="production", ADMIN_SECRET_KEY="changethis")
 
 

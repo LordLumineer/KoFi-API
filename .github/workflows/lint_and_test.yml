@@ -28,8 +28,8 @@ jobs:
     - name: Set up thresholds
       id: thresholds
       run: |
-        echo "pylint_threshold=8" >> $GITHUB_OUTPUT
-        echo "coverage_threshold=80" >> $GITHUB_OUTPUT
+        echo "pylint_threshold=9.5" >> $GITHUB_OUTPUT
+        echo "coverage_threshold=95" >> $GITHUB_OUTPUT
         echo "ALL_CHECKS_PASSED=true" >> $GITHUB_ENV  # Initialize with true
 
     # Step 4: Install dependencies (including Anybadge)
@@ -45,7 +45,7 @@ jobs:
     - name: Run pylint
       id: pylint_run
       run: |
-        pylint_score=$(pylint app/ --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=parseable | tee reports/pylint.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
+        pylint_score=$(pylint app --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --rcfile=app/.pylintrc --output-format=parseable | tee reports/pylint.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
         pylint_score=$(echo "$pylint_score" | xargs)  # Ensure no leading/trailing whitespace
         echo "Pylint score is: $pylint_score/10"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT

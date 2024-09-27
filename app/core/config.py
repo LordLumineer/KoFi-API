@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     # _env_file_encoding="utf-8"
     # _env_ignore_empty=True
     # extra="ignore"
-    
+
     PROJECT_NAME: str = Field(default="Ko-fi API")
     DATA_RETENTION_DAYS: str | int = Field(default=30)
     DATABASE_URL: str = Field(default="sqlite:///./KoFi.db")  # "sqlite:///./KoFi.db"
@@ -81,7 +81,7 @@ class Settings(BaseSettings):
         the default secrets.
         """
         try:
-            self.DATA_RETENTION_DAYS = int(self.DATA_RETENTION_DAYS)
+            self.DATA_RETENTION_DAYS = int(self.DATA_RETENTION_DAYS) # pylint: disable=C0103
         except ValueError as e:
             raise ValueError("DATA_RETENTION_DAYS must be an integer") from e
         self._check_default_secret("ADMIN_SECRET_KEY", self.ADMIN_SECRET_KEY)
