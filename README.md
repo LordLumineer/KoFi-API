@@ -1,19 +1,14 @@
-<div align="center">
-
-![KoFi-API logo](./img/bitmap.svg "KoFi-API logo")
-
-# KoFi-API
+# KoFi-API 
 
 An API to store and access Ko-fi donations
 
 <!-- Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Lint and Test](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test_push.yml/badge.svg?branch=master)](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test_push.yml)
+[![Lint and Test](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test.yml/badge.svg?branch=master)](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test.yml)
 
 [![Pytest](./img/pytest_badge.svg)](./reports/pytest.md)
 [![Pylint Score](./img/pylint_badge.svg)](./reports/pylint.txt)
 [![Coverage](./img/coverage_badge.svg)](./reports/coverage.txt)
-</div>
 
 ## About Ko-fi API
 
