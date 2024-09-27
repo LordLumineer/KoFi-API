@@ -1,8 +1,8 @@
 # KoFi-API
 
-[![Pytest](./img/pytest_badge.svg)](./reports/pytest.json)
-[![Pylint Score](./img/pylint_badge.svg)](./reports/pylint.json)
-[![Coverage](./img/coverage_badge.svg)](./reports/coverage.json)
+[![Pytest](./img/pytest_badge.svg)](./reports/pytest.md)
+[![Pylint Score](./img/pylint_badge.svg)](./reports/pylint.txt)
+[![Coverage](./img/coverage_badge.svg)](./reports/coverage.txt)
 
 Ko-fi Donation API is a FastAPI-based system that allows users to manage Ko-fi donations, users, and transactions. It provides a set of API endpoints for handling donations, exporting and importing the database, and admin-specific operations like managing users and transactions.
 
@@ -159,10 +159,22 @@ That's it! You're all set up to use and contribute to the Ko-fi Donation API.
 ## Useful CMD
 
 ```bash
+pip install -r app/requirements.txt
+pip install -r app/test/requirements-dev.txt
+
+fastapi dev app/main.py
+fastapi dev app/main.py --host 0.0.0.0
+
+pylint app/ 
+pylint app/ --fail-under=8 --output-format=parseable | tee reports/pylint-report.txt
+
+pytest --tb=no --md-report --md-report-verbose=1
+pytest --tb=no --md-report --md-report-output=reports/pytest.md
+
+coverage run -m pytest --tb=no --md-report
+coverage run -m pytest --tb=no --md-report --md-report-output=reports/pytest.md 
+coverage report | tee reports/coverage.txt
+
+cd app
 alembic revision --autogenerate -m "describe your changes"
-fastapi dev ./main.py --host 0.0.0.0
-uvicorn main:app --host 0.0.0.0
-fastapi dev ./main.py
-coverage run -m pytest
-coverage html
 ```

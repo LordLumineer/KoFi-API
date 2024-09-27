@@ -45,7 +45,7 @@ jobs:
     - name: Run pylint
       id: pylint_run
       run: |
-        pylint_score=$(pylint app/ --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
+        pylint_score=$(pylint app/ --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=parseable | tee reports/pylint.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
         pylint_score=$(echo "$pylint_score" | xargs)  # Ensure no leading/trailing whitespace
         echo "Pylint score is: $pylint_score/10"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
@@ -75,14 +75,14 @@ jobs:
         fi
 
   # ---------- PYTEST ---------- #
-    # Step 7: Run Coverage and generate PyTest report
+    # Step 8: Run Coverage and generate PyTest report
     - name: Run PyTest with Coverage
       id: pytest_run
       run: |
-        coverage run -m pytest --tb=no --json-report --json-report-summary --json-report-indent=4 --json-report-file=reports/pytest.json
+        coverage run -m pytest --tb=no --md-report --md-report-output=reports/pytest.md --md-report-flavor=gfm
       continue-on-error: true  # Do not fail the job yet
     
-    # Step 8: Check pytest result based on exit code
+    # Step 9: Check pytest result based on exit code
     - name: Check pytest result
       id: pytest_check
       if: ${{ steps.pytest_run.outcome == 'failure' }}
@@ -90,7 +90,7 @@ jobs:
         echo "PyTest failed. Setting failure flag."
         echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
   
-    # Step 8: Generate PyTest Badge
+    # Step 10: Generate PyTest Badge
     - name: Generate PyTest Badge
       id: pytest_generate
       run: |
@@ -103,18 +103,17 @@ jobs:
         fi
 
   # ---------- COVERAGE ---------- #
-    # Step 7: Check coverage and generate Coverage report
+    # Step 11: Check coverage and generate Coverage report
     - name: Check coverage
       id: coverage_run
       run: |
-        coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
-        coverage json -o reports/coverage.json --pretty-print
+        coverage_percentage=$(coverage report | tee reports/coverage.txt | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
         echo "Coverage percentage is: $coverage_percentage"
         echo "coverage_percentage=$coverage_percentage" >> $GITHUB_OUTPUT
         coverage report --fail-under=${{ steps.thresholds.outputs.coverage_threshold }}
       continue-on-error: true  # Do not fail the job yet
 
-    # Step 8: Check Coverage result based on exit code
+    # Step 12: Check Coverage result based on exit code
     - name: Check Coverage Score
       id: coverage_check
       if: ${{ steps.coverage_run.outcome == 'failure' }}
@@ -122,7 +121,7 @@ jobs:
         echo "Coverage is below the required threshold. ${{ steps.coverage_run.outputs.coverage_percentage }}% (required >${{ steps.thresholds.outputs.coverage_threshold }}%)"
         echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
 
-    # Step 9: Generate Coverage Badge
+    # Step 13: Generate Coverage Badge
     - name: Generate Coverage Badge
       id: coverage_generate
       run: |
@@ -135,7 +134,7 @@ jobs:
         fi
 
   # ---------- UPLOAD ---------- #
-    # Step 13: Upload the badges and reports as GitHub artifacts (optional)
+    # Step 14: Upload the badges and reports as GitHub artifacts (optional)
     - name: Upload badges an reports
       uses: actions/upload-artifact@v4
       with:
@@ -144,20 +143,20 @@ jobs:
           img/pylint_badge.svg
           img/pytest_badge.svg
           img/coverage_badge.svg
-          reports/pylint.json
-          reports/pytest.json
-          reports/coverage.json
+          reports/pylint.txt
+          reports/pytest.md
+          reports/coverage.txt
 
-    # (Optional) Step 14: Commit the badges to the repo if you want them automatically updated
+    # (Optional) Step 15: Commit the badges to the repo if you want them automatically updated
     - name: Commit badges
       run: |
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
-        git add img/pylint_badge.svg img/coverage_badge.svg img/pytest_badge.svg reports/pylint.json reports/coverage.json reports/pytest.json
+        git add img/pylint_badge.svg img/coverage_badge.svg img/pytest_badge.svg reports/pylint.txt reports/coverage.txt reports/pytest.md
         git commit -m "Update badges & reports"
         git push
     
-    # Step 6: Fail if the tests Failed
+    # Step 16: Fail if the tests Failed
     - name: Check Test Result
       if: env.ALL_CHECKS_PASSED == 'false'
       run: |
