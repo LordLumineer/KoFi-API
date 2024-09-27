@@ -96,7 +96,7 @@ jobs:
     - name: Generate PyTest Badge
       id: pytest_generate
       run: |
-        if [ "${{ steps.pytest_run.outcome }}" == "failure" }} ]; then
+        if [ "${{ steps.pytest_run.outcome }}" == "failure" ]; then
           echo "FAIL"
           anybadge -l PyTest -v FAIL -f img/pytest_badge.svg -o -c red
         elif [ "${{ steps.pytest_run.outcome }}" == "success" ]; then
@@ -163,4 +163,13 @@ jobs:
     - name: Check Test Result
       if: env.ALL_CHECKS_PASSED == 'false'
       run: |
+        if [ "${{ steps.pylint_check.outcome }}" == "success" ]; then
+          echo "PyLint Failed"
+        fi
+        if [ "${{ steps.pytest_check.outcome }}" == "success" ]; then
+          echo "PyTest Failed"
+        fi
+        if [ "${{ steps.coverage_check.outcome }}" == "success" ]; then
+          echo "Coverage Failed"
+        fi
         exit 1
