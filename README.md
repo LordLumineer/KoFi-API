@@ -1,4 +1,4 @@
-# KoFi-API 
+# KoFi-API
 
 An API to store and access Ko-fi donations
 
