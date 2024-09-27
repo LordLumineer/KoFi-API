@@ -1,0 +1,12 @@
+{
+    "created": 1727400716.4259455,
+    "duration": 3.408470630645752,
+    "exitcode": 0,
+    "root": "/home/runner/work/KoFi-API/KoFi-API",
+    "environment": {},
+    "summary": {
+        "passed": 47,
+        "total": 47,
+        "collected": 47
+    }
+}
