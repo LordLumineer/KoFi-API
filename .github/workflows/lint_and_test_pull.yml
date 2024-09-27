@@ -1,9 +1,6 @@
-name: Lint and Test
+name: Lint and Test - Pull Request
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -146,26 +143,8 @@ jobs:
           reports/pylint.txt
           reports/pytest.md
           reports/coverage.txt
-
-    # (Optional) Step 15: Commit the badges to the repo if you want them automatically updated
-    - name: Commit badges
-      id: commit_badges
-      run: |
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions"
-        git add img/pylint_badge.svg img/coverage_badge.svg img/pytest_badge.svg reports/pylint.txt reports/coverage.txt reports/pytest.md
-        git commit -m "Update badges & reports"
-        git push
-      continue-on-error: true
-
-    # Step 16: Check if commit was successful
-    - name: Check if commit was successful
-      if: steps.commit_badges.outcome == 'failure'
-      run: |
-        git pull origin HEAD:master
-        git push origin HEAD:master
     
-    # Step 17: Fail if the tests Failed
+    # Step 15: Fail if the tests Failed
     - name: Check Test Result
       if: env.ALL_CHECKS_PASSED == 'false'
       run: |
