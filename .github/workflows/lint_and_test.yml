@@ -48,9 +48,10 @@ jobs:
       run: |
         cd app
         pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:../reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
-        echo "Pylint score is: $pylint_score /10"
+        pylint_score=$(echo "$pylint_score" | xargs)  # Ensure no leading/trailing whitespace
+        echo "Pylint score is: $pylint_score/10"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
-        if echo "$pylint_score < ${{ steps.thresholds.outputs.pylint_threshold }}" | bc -l; then
+        if [ $(echo "$pylint_score < ${{ steps.thresholds.outputs.pylint_threshold }}" | bc -l) -eq 1 ]; then
           exit 1
         fi
       continue-on-error: true  # Do not fail the job yet
@@ -108,11 +109,11 @@ jobs:
     - name: Check coverage
       id: coverage_run
       run: |
-        coverage report --fail-under=${{ steps.thresholds.outputs.coverage_threshold }}
-        coverage json -o reports/coverage.json --pretty-print
         coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
+        coverage json -o reports/coverage.json --pretty-print
         echo "Coverage percentage is: $coverage_percentage"
         echo "coverage_percentage=$coverage_percentage" >> $GITHUB_OUTPUT
+        coverage report --fail-under=${{ steps.thresholds.outputs.coverage_threshold }}
       continue-on-error: true  # Do not fail the job yet
 
     # Step 8: Check Coverage result based on exit code
@@ -160,6 +161,6 @@ jobs:
     
     # Step 6: Fail if the tests Failed
     - name: Check Test Result
-      if: env.ALL_CHECKS_PASSED == 'true'
+      if: env.ALL_CHECKS_PASSED == 'false'
       run: |
         exit 1
