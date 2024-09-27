@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - Dev
   pull_request:
     branches:
       - main
@@ -79,7 +80,7 @@ jobs:
     - name: Run PyTest with Coverage
       id: pytest_run
       run: |
-        coverage run -m pytest --tb=no --md-report --md-report-output=reports/pytest.md --md-report-flavor=gfm
+        coverage run -m pytest --tb=no --md-report --md-report-output=reports/pytest.md
       continue-on-error: true  # Do not fail the job yet
     
     # Step 9: Check pytest result based on exit code

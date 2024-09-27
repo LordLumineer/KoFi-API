@@ -154,7 +154,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-That's it! You're all set up to use and contribute to the Ko-fi Donation API.
+That's it! You're all set up to use the Ko-fi API.
 
 ## Useful CMD
 
