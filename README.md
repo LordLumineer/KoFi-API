@@ -34,12 +34,12 @@ Ko-fi Donation API is a FastAPI-based system that allows users to manage Ko-fi d
 
 ## Requirements
 
-- [Python 3.10+](https://www.python.org/downloads/): Any Python 3.10+ version should be supported, built and tested using [`python 3.12.6`](https://www.python.org/downloads/release/python-3126/).
+- [Python 3.10+](https://www.python.org/downloads/): Any Python 3.10+ version should be supported, built and tested using [`Python 3.12.6`](https://www.python.org/downloads/release/python-3126/).
 - [FastAPI](https://fastapi.tiangolo.com/): A modern web framework for building APIs. The application uses [`FastAPI 0.115.0`](https://github.com/fastapi/fastapi/releases/tag/0.115.0) by default.
-- [SQLAlchemy](https://www.sqlalchemy.org/): A Python SQL toolkit and Object Relational Mapper (ORM) for database access.
-- [APScheduler](https://apscheduler.org/): A background job scheduler for Python, to remove every day data older than 30 days (default) from the database.
-- [alembic](https://alembic.sqlalchemy.org/): A migration tool for SQLAlchemy.
-- [pydantic](https://pydantic-docs.helpmanual.io/): A data validation library for Python.
+- [SQLAlchemy](https://www.sqlalchemy.org): A Python SQL toolkit and Object Relational Mapper (ORM) for database access.
+- [APScheduler](https://apscheduler.readthedocs.io): A background job scheduler for Python, to remove every day data older than 30 days (default) from the database.
+- [Alembic](https://alembic.sqlalchemy.org): A migration tool for SQLAlchemy.
+- [Pydantic](https://docs.pydantic.dev): A data validation library for Python.
 
 ### For testing purposes
 
