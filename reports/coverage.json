@@ -2,12 +2,12 @@
     "meta": {
         "format": 3,
         "version": "7.6.1",
-        "timestamp": "2024-09-26T19:34:12.548298",
+        "timestamp": "2024-09-27T00:09:05.817631",
         "branch_coverage": false,
         "show_contexts": false
     },
     "files": {
-        "app\\__init__.py": {
+        "app/__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -52,7 +52,7 @@
                 }
             }
         },
-        "app\\api\\__init__.py": {
+        "app/api/__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -97,7 +97,7 @@
                 }
             }
         },
-        "app\\api\\router.py": {
+        "app/api/router.py": {
             "executed_lines": [
                 1,
                 8,
@@ -167,7 +167,7 @@
                 }
             }
         },
-        "app\\api\\routes\\__init__.py": {
+        "app/api/routes/__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -212,7 +212,7 @@
                 }
             }
         },
-        "app\\api\\routes\\admin.py": {
+        "app/api/routes/admin.py": {
             "executed_lines": [
                 1,
                 8,
@@ -340,7 +340,7 @@
                 }
             }
         },
-        "app\\api\\routes\\db.py": {
+        "app/api/routes/db.py": {
             "executed_lines": [
                 1,
                 8,
@@ -549,7 +549,7 @@
                 }
             }
         },
-        "app\\api\\routes\\kofi.py": {
+        "app/api/routes/kofi.py": {
             "executed_lines": [
                 1,
                 9,
@@ -949,7 +949,7 @@
                 }
             }
         },
-        "app\\api\\routes\\user.py": {
+        "app/api/routes/user.py": {
             "executed_lines": [
                 1,
                 8,
@@ -1226,7 +1226,7 @@
                 }
             }
         },
-        "app\\core\\__init__.py": {
+        "app/core/__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -1271,7 +1271,7 @@
                 }
             }
         },
-        "app\\core\\base.py": {
+        "app/core/base.py": {
             "executed_lines": [
                 1,
                 8,
@@ -1342,7 +1342,7 @@
                 }
             }
         },
-        "app\\core\\config.py": {
+        "app/core/config.py": {
             "executed_lines": [
                 1,
                 8,
@@ -1534,7 +1534,7 @@
                 }
             }
         },
-        "app\\core\\db.py": {
+        "app/core/db.py": {
             "executed_lines": [
                 1,
                 8,
@@ -1949,7 +1949,7 @@
                 }
             }
         },
-        "app\\core\\models.py": {
+        "app/core/models.py": {
             "executed_lines": [
                 1,
                 8,
@@ -2274,7 +2274,7 @@
                 }
             }
         },
-        "app\\core\\utils.py": {
+        "app/core/utils.py": {
             "executed_lines": [
                 1,
                 8,
@@ -2414,7 +2414,7 @@
                 }
             }
         },
-        "app\\main.py": {
+        "app/main.py": {
             "executed_lines": [
                 1,
                 8,
@@ -2592,7 +2592,7 @@
                 }
             }
         },
-        "app\\test\\__init__.py": {
+        "app/test/__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -2637,7 +2637,7 @@
                 }
             }
         },
-        "app\\test\\api\\__init__.py": {
+        "app/test/api/__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -2682,7 +2682,7 @@
                 }
             }
         },
-        "app\\test\\api\\test_admin.py": {
+        "app/test/api/test_admin.py": {
             "executed_lines": [
                 1,
                 2,
@@ -2906,7 +2906,7 @@
                 }
             }
         },
-        "app\\test\\api\\test_db.py": {
+        "app/test/api/test_db.py": {
             "executed_lines": [
                 1,
                 2,
@@ -3204,7 +3204,7 @@
                 }
             }
         },
-        "app\\test\\api\\test_kofi.py": {
+        "app/test/api/test_kofi.py": {
             "executed_lines": [
                 1,
                 2,
@@ -3621,7 +3621,7 @@
                 }
             }
         },
-        "app\\test\\api\\test_user.py": {
+        "app/test/api/test_user.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4003,7 +4003,7 @@
                 }
             }
         },
-        "app\\test\\conftest.py": {
+        "app/test/conftest.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4118,7 +4118,7 @@
                 }
             }
         },
-        "app\\test\\core\\__init__.py": {
+        "app/test/core/__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -4163,7 +4163,7 @@
                 }
             }
         },
-        "app\\test\\core\\test_base.py": {
+        "app/test/core/test_base.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4329,7 +4329,7 @@
                 }
             }
         },
-        "app\\test\\core\\test_bd.py": {
+        "app/test/core/test_bd.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4440,7 +4440,7 @@
                 }
             }
         },
-        "app\\test\\core\\test_config.py": {
+        "app/test/core/test_config.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4655,7 +4655,7 @@
                 }
             }
         },
-        "app\\test\\core\\test_models.py": {
+        "app/test/core/test_models.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4911,7 +4911,7 @@
                 }
             }
         },
-        "app\\test\\core\\test_utils.py": {
+        "app/test/core/test_utils.py": {
             "executed_lines": [
                 1,
                 2,
@@ -5157,7 +5157,7 @@
                 }
             }
         },
-        "app\\test\\test_main.py": {
+        "app/test/test_main.py": {
             "executed_lines": [
                 1,
                 2,

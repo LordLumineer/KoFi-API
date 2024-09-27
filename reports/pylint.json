@@ -1933,7 +1933,7 @@
         "endColumn": null,
         "path": "api/routes/__init__.py",
         "symbol": "duplicate-code",
-        "message": "Similar lines in 2 files\n==app.test.api.test_admin:[13:43]\n==app.test.api.test_kofi:[12:44]\nbasic_mock_transaction = KofiTransaction(\n    verification_token=\"test_token\",\n    message_id=\"12345\",\n    timestamp=\"2024-09-25T12:34:56\",\n    type=\"Donation\",\n    is_public=True,\n    from_name=\"John Doe\",\n    message=\"Great work!\",\n    amount=\"5.00\",\n    url=\"https://ko-fi.com/some-url\",\n    email=\"john.doe@example.com\",\n    currency=\"USD\",\n    is_subscription_payment=False,\n    is_first_subscription_payment=False,\n    kofi_transaction_id=\"txn_123\",\n    shop_items=None,\n    tier_name=None,\n    shipping=None\n)\n\nbasic_mock_user = KofiUser(\n    verification_token=\"test_token\",\n    data_retention_days=30,\n    latest_request_at=\"2024-09-25T12:34:56\",\n    prefered_currency=\"USD\"\n)\n\n@pytest.fixture\ndef mock_settings(monkeypatch):\n    \"\"\"Fixture to mock settings with valid admin secret key.\"\"\"",
+        "message": "Similar lines in 2 files\n==app.test.api.test_admin:[13:43]\n==app.test.api.test_kofi:[12:44]\nbasic_mock_transaction = KofiTransaction(\n    verification_token=\"test_token\",\n    message_id=\"12345\",\n    timestamp=\"2024-09-25T12:34:56\",\n    type=\"Donation\",\n    is_public=True,\n    from_name=\"John Doe\",\n    message=\"Great work!\",\n    amount=\"5.00\",\n    url=\"https://ko-fi.com/some-url\",\n    email=\"john.doe@example.com\",\n    currency=\"USD\",\n    is_subscription_payment=False,\n    is_first_subscription_payment=False,\n    kofi_transaction_id=\"txn_123\",\n    shop_items=None,\n    tier_name=None,\n    shipping=None\n)\n\nbasic_mock_user = KofiUser(\n    verification_token=\"test_token\",\n    data_retention_days=30,\n    latest_request_at=\"2024-09-25T12:34:56\",\n    prefered_currency=\"USD\"\n)\n\n# --------------- Test Webhook Endpoint ---------------\n\n\ndef test_webhook_transaction_success(mock_db_session):\n    \"\"\"Test receiving a valid Ko-fi transaction through the webhook.\"\"\"",
         "message-id": "R0801"
     },
     {
@@ -1972,7 +1972,7 @@
         "endColumn": null,
         "path": "api/routes/__init__.py",
         "symbol": "duplicate-code",
-        "message": "Similar lines in 2 files\n==app.test.api.test_kofi:[13:19]\n==app.test.core.test_models:[91:97]\n        verification_token=\"test_token\",\n        message_id=\"12345\",\n        timestamp=\"2024-09-25T12:34:56\",\n        type=\"Donation\",\n        is_public=True,\n        from_name=\"John Doe\",",
+        "message": "Similar lines in 2 files\n==app.test.api.test_kofi:[13:19]\n==app.test.core.test_models:[91:97]\n    verification_token=\"test_token\",\n    message_id=\"12345\",\n    timestamp=\"2024-09-25T12:34:56\",\n    type=\"Donation\",\n    is_public=True,\n    from_name=\"John Doe\",",
         "message-id": "R0801"
     }
 ]
