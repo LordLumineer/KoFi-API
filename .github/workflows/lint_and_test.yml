@@ -50,7 +50,11 @@ jobs:
         pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:../reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
         echo "Pylint score is: $pylint_score/10"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
-      # continue-on-error: true  # Do not fail the job yet
+        if [ $pylint_score -lt ${{ steps.thresholds.outputs.pylint_threshold }} ]; then
+          echo "FAIL"
+          exit 1
+        fi
+      continue-on-error: true  # Do not fail the job yet
 
     # Step 6: Fail if pylint score is below threshold
     - name: Check pylint score
