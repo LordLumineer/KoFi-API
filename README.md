@@ -8,7 +8,7 @@ An API to store and access Ko-fi donations
 
 <!-- Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Lint and Test](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test.yml/badge.svg?branch=Master)](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test.yml)
+[![Lint and Test](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test_push.yml/badge.svg?branch=master)](https://github.com/LordLumineer/KoFi-API/actions/workflows/lint_and_test_push.yml)
 
 [![Pytest](./img/pytest_badge.svg)](./reports/pytest.md)
 [![Pylint Score](./img/pylint_badge.svg)](./reports/pylint.txt)
