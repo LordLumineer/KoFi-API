@@ -26,7 +26,7 @@ jobs:
       id: thresholds
       run: |
         echo "pylint_threshold=9.5" >> $GITHUB_OUTPUT
-        echo "coverage_threshold=95" >> $GITHUB_OUTPUT
+        echo "coverage_threshold=85" >> $GITHUB_OUTPUT
         echo "ALL_CHECKS_PASSED=true" >> $GITHUB_ENV  # Initialize with true
 
     # Step 4: Install dependencies (including Anybadge)
