@@ -162,6 +162,7 @@ jobs:
     - name: Check if commit was successful
       if: steps.commit_badges.outcome == 'failure'
       run: |
+        git pull origin HEAD:master
         git push origin HEAD:master
     
     # Step 17: Fail if the tests Failed
