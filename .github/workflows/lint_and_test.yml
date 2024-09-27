@@ -47,29 +47,29 @@ jobs:
       id: pylint_run
       run: |
         cd app
-        pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:../reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
-        echo "Pylint score is: $pylint_score"
+        pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:../reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}' | sed 's/\/10//')
+        echo "Pylint score is: $pylint_score/10"
         echo "pylint_score=$pylint_score" >> $GITHUB_OUTPUT
-      continue-on-error: true  # Do not fail the job yet
+      # continue-on-error: true  # Do not fail the job yet
 
     # Step 6: Fail if pylint score is below threshold
     - name: Check pylint score
       id: pylint_check
       if: ${{ steps.pylint_run.outputs.pylint_score < steps.thresholds.outputs.pylint_threshold }}
       run: |
-        echo "Pylint score is below the required threshold. ${{ steps.pylint_run.outputs.pylint_score }} (required >${{ steps.thresholds.outputs.pylint_threshold }})"
+        echo "Pylint score is below the required threshold. ${{ steps.pylint_run.outputs.pylint_score }}/10 (required >${{ steps.thresholds.outputs.pylint_threshold }}/10)"
         echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV  # Mark that one check failed
 
     # Step 7: Generate PyLint Badge
     - name: Generate PyLint Badge
       id: pylint_generate
       run: |
-        if [ "${{ steps.pylint_run.outcome }}" == "failure" ]; then
+        if [ ${{ steps.pylint_run.outcome == 'failure' }} ]; then
           echo "FAIL"
-          anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o -c red
-        elif [ "${{ steps.pylint_run.outcome }}" == "success" ]; then
+          anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -s /10 -f img/pylint_badge.svg -o -c red
+        elif [ ${{ steps.pylint_run.outcome == 'success' }} ]; then
           echo "PASS"
-          anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o pylint
+          anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -s /10 -f img/pylint_badge.svg -o pylint
         fi
 
   # ---------- PYTEST ---------- #
@@ -92,10 +92,10 @@ jobs:
     - name: Generate PyTest Badge
       id: pytest_generate
       run: |
-        if [ "${{ steps.pytest_run.outcome }}" == "failure" ]; then
+        if [ ${{ steps.pytest_run.outcome == 'failure' }} ]; then
           echo "FAIL"
           anybadge -l PyTest -v FAIL -f img/pytest_badge.svg -o -c red
-        elif [ "${{ steps.pytest_run.outcome }}" == "success" ]; then
+        elif [ ${{ steps.pytest_run.outcome == 'success' }} ]; then
           echo "PASS"
           anybadge -l PyTest -v PASS -f img/pytest_badge.svg -o -c green
         fi
@@ -124,10 +124,10 @@ jobs:
     - name: Generate Coverage Badge
       id: coverage_generate
       run: |
-        if [ "${{ steps.coverage_run.outcome }}" == "failure" ]; then
+        if [ ${{ steps.coverage_run.outcome == 'failure' }} ]; then
           echo "FAIL"
           anybadge -l Coverage -v ${{ steps.coverage_run.outputs.coverage_percentage }}% -f img/coverage_badge.svg -o ${{ steps.thresholds.outputs.coverage_threshold }}=red
-        elif [ "${{ steps.coverage_run.outcome }}" == "success" ]; then
+        elif [ ${{ steps.coverage_run.outcome == 'success' }} ]; then
           echo "PASS"
           anybadge -l Coverage -v ${{ steps.coverage_run.outputs.coverage_percentage }} -f img/coverage_badge.svg -o coverage
         fi
