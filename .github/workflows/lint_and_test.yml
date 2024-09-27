@@ -65,8 +65,10 @@ jobs:
       id: pylint_generate
       run: |
         if [ "${{ steps.pylint_run.outcome }}" == "failure" ]; then
+          echo "FAIL"
           anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o -c red
         elif [ "${{ steps.pylint_run.outcome }}" == "success" ]; then
+          echo "PASS"
           anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o pylint
         fi
 
@@ -91,8 +93,10 @@ jobs:
       id: pytest_generate
       run: |
         if [ "${{ steps.pytest_run.outcome }}" == "failure" ]; then
+          echo "FAIL"
           anybadge -l PyTest -v FAIL -f img/pytest_badge.svg -o -c red
         elif [ "${{ steps.pytest_run.outcome }}" == "success" ]; then
+          echo "PASS"
           anybadge -l PyTest -v PASS -f img/pytest_badge.svg -o -c green
         fi
 
@@ -121,8 +125,10 @@ jobs:
       id: coverage_generate
       run: |
         if [ "${{ steps.coverage_run.outcome }}" == "failure" ]; then
-          anybadge -l Coverage -v ${{ steps.coverage_run.outputs.coverage_percentage }} -f img/coverage_badge.svg -o ${{ steps.thresholds.outputs.coverage_threshold }}=red
+          echo "FAIL"
+          anybadge -l Coverage -v ${{ steps.coverage_run.outputs.coverage_percentage }}% -f img/coverage_badge.svg -o ${{ steps.thresholds.outputs.coverage_threshold }}=red
         elif [ "${{ steps.coverage_run.outcome }}" == "success" ]; then
+          echo "PASS"
           anybadge -l Coverage -v ${{ steps.coverage_run.outputs.coverage_percentage }} -f img/coverage_badge.svg -o coverage
         fi
 
