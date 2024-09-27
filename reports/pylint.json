@@ -1946,7 +1946,7 @@
         "endColumn": null,
         "path": "api/routes/__init__.py",
         "symbol": "duplicate-code",
-        "message": "Similar lines in 2 files\n==app.test.api.test_kofi:[13:19]\n==app.test.core.test_models:[91:97]\n    verification_token=\"test_token\",\n    message_id=\"12345\",\n    timestamp=\"2024-09-25T12:34:56\",\n    type=\"Donation\",\n    is_public=True,\n    from_name=\"John Doe\",",
+        "message": "Similar lines in 2 files\n==app.test.api.test_kofi:[13:19]\n==app.test.core.test_models:[91:97]\n        verification_token=\"test_token\",\n        message_id=\"12345\",\n        timestamp=\"2024-09-25T12:34:56\",\n        type=\"Donation\",\n        is_public=True,\n        from_name=\"John Doe\",",
         "message-id": "R0801"
     }
 ]
