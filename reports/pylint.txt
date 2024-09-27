@@ -1,0 +1,230 @@
+************* Module app.test.test_main
+app/test/test_main.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+app/test/test_main.py:37: [W0613(unused-argument), test_lifespan] Unused argument 'mock_remove_expired_transactions'
+app/test/test_main.py:2: [C0411(wrong-import-order), ] standard import "unittest.mock.patch" should be placed before third party import "pytest"
+app/test/test_main.py:5: [C0411(wrong-import-order), ] third party import "fastapi.routing.APIRoute" should be placed before first party import "app.main.app" 
+app/test/test_main.py:5: [C0412(ungrouped-imports), ] Imports from package fastapi are not grouped
+************* Module app.test.conftest
+app/test/conftest.py:11: [C0116(missing-function-docstring), client] Missing function or method docstring
+app/test/conftest.py:16: [C0116(missing-function-docstring), mock_db_session] Missing function or method docstring
+app/test/conftest.py:3: [C0411(wrong-import-order), ] standard import "unittest.mock.MagicMock" should be placed before third party import "pytest"
+************* Module app.test.core.test_utils
+app/test/core/test_utils.py:4: [C0411(wrong-import-order), ] standard import "unittest.mock.patch" should be placed before third party imports "httpx", "pytest"
+************* Module app.test.core.test_models
+app/test/core/test_models.py:88: [W0612(unused-variable), test_kofi_transaction_model_defaults] Unused variable 'mock_session'
+app/test/core/test_models.py:120: [W0612(unused-variable), test_kofi_user_model_defaults] Unused variable 'mock_session'
+app/test/core/test_models.py:6: [W0611(unused-import), ] Unused settings imported from app.core.config
+************* Module app.test.core.test_bd
+app/test/core/test_bd.py:5: [C0301(line-too-long), ] Line too long (110/100)
+app/test/core/test_bd.py:31: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_bd.py:3: [C0411(wrong-import-order), ] standard import "unittest.mock.patch" should be placed before third party import "pytest"
+app/test/core/test_bd.py:2: [W0611(unused-import), ] Unused import pytest
+app/test/core/test_bd.py:4: [W0611(unused-import), ] Unused Session imported from sqlalchemy.orm
+app/test/core/test_bd.py:5: [W0611(unused-import), ] Unused remove_expired_transactions imported from app.core.db
+app/test/core/test_bd.py:5: [W0611(unused-import), ] Unused run_migrations imported from app.core.db
+app/test/core/test_bd.py:5: [W0611(unused-import), ] Unused handle_database_import imported from app.core.db
+app/test/core/test_bd.py:5: [W0611(unused-import), ] Unused export_db imported from app.core.db
+************* Module app.test.core.test_base
+app/test/core/test_base.py:10: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:17: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:20: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:23: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:30: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:35: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:40: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:44: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:49: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:53: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:57: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_base.py:8: [C0115(missing-class-docstring), MockModel] Missing class docstring
+app/test/core/test_base.py:8: [R0903(too-few-public-methods), MockModel] Too few public methods (0/2)
+app/test/core/test_base.py:2: [W0611(unused-import), ] Unused import pytest
+************* Module app.test.core.test_config
+app/test/core/test_config.py:42: [C0301(line-too-long), ] Line too long (102/100)
+app/test/core/test_config.py:45: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_config.py:47: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/core/test_config.py:55: [C0301(line-too-long), ] Line too long (106/100)
+app/test/core/test_config.py:56: [C0301(line-too-long), ] Line too long (151/100)
+app/test/core/test_config.py:62: [C0301(line-too-long), ] Line too long (101/100)
+app/test/core/test_config.py:46: [W0612(unused-variable), test_secret_warning_local_env] Unused variable 'settings'
+app/test/core/test_config.py:4: [C0411(wrong-import-order), ] standard import "warnings" should be placed before third party import "pytest"
+app/test/core/test_config.py:5: [W0611(unused-import), ] Unused ValidationError imported from pydantic
+************* Module app.test.api.test_kofi
+app/test/api/test_kofi.py:43: [W0613(unused-argument), test_webhook_transaction_success] Unused argument 'mock_db_session'
+app/test/api/test_kofi.py:79: [W0613(unused-argument), test_webhook_invalid_transaction_data] Unused argument 'mock_db_session'
+app/test/api/test_kofi.py:6: [C0411(wrong-import-order), ] standard import "unittest.mock.patch" should be placed before third party imports "pytest", "fastapi.testclient.TestClient"
+app/test/api/test_kofi.py:4: [W0611(unused-import), ] Unused import pytest
+app/test/api/test_kofi.py:6: [W0611(unused-import), ] Unused MagicMock imported from unittest.mock
+app/test/api/test_kofi.py:7: [W0611(unused-import), ] Unused router imported from app.api.routes.kofi
+app/test/api/test_kofi.py:8: [W0611(unused-import), ] Unused KofiTransactionSchema imported from app.core.models
+************* Module app.test.api.test_admin
+app/test/api/test_admin.py:11: [C0103(invalid-name), ] Constant name "admin_secret_key" doesn't conform to UPPER_CASE naming style
+app/test/api/test_admin.py:12: [C0103(invalid-name), ] Constant name "invalid_admin_secret_key" doesn't conform to UPPER_CASE naming style
+app/test/api/test_admin.py:48: [W0621(redefined-outer-name), test_read_transaction_db_success] Redefining name 'mock_settings' from outer scope (line 42)
+app/test/api/test_admin.py:48: [W0613(unused-argument), test_read_transaction_db_success] Unused argument 'mock_settings'
+app/test/api/test_admin.py:60: [W0621(redefined-outer-name), test_read_transaction_db_invalid_secret_key] Redefining name 'mock_settings' from outer scope (line 42)
+app/test/api/test_admin.py:60: [W0613(unused-argument), test_read_transaction_db_invalid_secret_key] Unused argument 'mock_settings'
+app/test/api/test_admin.py:69: [W0621(redefined-outer-name), test_read_user_db_success] Redefining name 'mock_settings' from outer scope (line 42)
+app/test/api/test_admin.py:69: [W0613(unused-argument), test_read_user_db_success] Unused argument 'mock_settings'
+app/test/api/test_admin.py:81: [W0621(redefined-outer-name), test_read_user_db_invalid_secret_key] Redefining name 'mock_settings' from outer scope (line 42)
+app/test/api/test_admin.py:81: [W0613(unused-argument), test_read_user_db_invalid_secret_key] Unused argument 'mock_settings'
+app/test/api/test_admin.py:4: [C0411(wrong-import-order), ] standard import "unittest.mock.patch" should be placed before third party imports "pytest", "fastapi.testclient.TestClient"
+app/test/api/test_admin.py:4: [W0611(unused-import), ] Unused patch imported from unittest.mock
+app/test/api/test_admin.py:4: [W0611(unused-import), ] Unused MagicMock imported from unittest.mock
+************* Module app.test.api.test_db
+app/test/api/test_db.py:58: [C0301(line-too-long), ] Line too long (109/100)
+app/test/api/test_db.py:63: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/api/test_db.py:73: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/api/test_db.py:75: [C0301(line-too-long), ] Line too long (117/100)
+app/test/api/test_db.py:76: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/api/test_db.py:79: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/api/test_db.py:92: [C0301(line-too-long), ] Line too long (111/100)
+app/test/api/test_db.py:107: [C0301(line-too-long), ] Line too long (108/100)
+app/test/api/test_db.py:112: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/api/test_db.py:122: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/api/test_db.py:124: [C0301(line-too-long), ] Line too long (116/100)
+app/test/api/test_db.py:128: [C0303(trailing-whitespace), ] Trailing whitespace
+app/test/api/test_db.py:141: [C0301(line-too-long), ] Line too long (110/100)
+app/test/api/test_db.py:11: [C0103(invalid-name), ] Constant name "admin_secret_key" doesn't conform to UPPER_CASE naming style
+app/test/api/test_db.py:12: [C0103(invalid-name), ] Constant name "invalid_admin_secret_key" doesn't conform to UPPER_CASE naming style
+app/test/api/test_db.py:33: [W0621(redefined-outer-name), test_db_export_invalid_secret_key] Redefining name 'mock_settings' from outer scope (line 15)
+app/test/api/test_db.py:33: [W0613(unused-argument), test_db_export_invalid_secret_key] Unused argument 'mock_settings'
+app/test/api/test_db.py:52: [W0621(redefined-outer-name), test_db_recover_success] Redefining name 'mock_settings' from outer scope (line 15)
+app/test/api/test_db.py:52: [W0613(unused-argument), test_db_recover_success] Unused argument 'mock_settings'
+app/test/api/test_db.py:69: [W0621(redefined-outer-name), test_db_recover_invalid_secret_key] Redefining name 'mock_settings' from outer scope (line 15)
+app/test/api/test_db.py:69: [W0613(unused-argument), test_db_recover_invalid_secret_key] Unused argument 'mock_settings'
+app/test/api/test_db.py:101: [W0621(redefined-outer-name), test_db_import_success] Redefining name 'mock_settings' from outer scope (line 15)
+app/test/api/test_db.py:101: [W0613(unused-argument), test_db_import_success] Unused argument 'mock_settings'
+app/test/api/test_db.py:118: [W0621(redefined-outer-name), test_db_import_invalid_secret_key] Redefining name 'mock_settings' from outer scope (line 15)
+app/test/api/test_db.py:118: [W0613(unused-argument), test_db_import_invalid_secret_key] Unused argument 'mock_settings'
+app/test/api/test_db.py:4: [C0411(wrong-import-order), ] standard import "unittest.mock.patch" should be placed before third party imports "pytest", "fastapi.testclient.TestClient"
+app/test/api/test_db.py:4: [W0611(unused-import), ] Unused MagicMock imported from unittest.mock
+************* Module app.test.api.test_user
+app/test/api/test_user.py:32: [C0301(line-too-long), ] Line too long (102/100)
+app/test/api/test_user.py:17: [C0116(missing-function-docstring), mock_db_session] Missing function or method docstring
+app/test/api/test_user.py:25: [W0621(redefined-outer-name), test_create_user_success] Redefining name 'mock_db_session' from outer scope (line 17)
+app/test/api/test_user.py:42: [W0621(redefined-outer-name), test_create_user_existing_user] Redefining name 'mock_db_session' from outer scope (line 17)
+app/test/api/test_user.py:54: [W0621(redefined-outer-name), test_get_user_success] Redefining name 'mock_db_session' from outer scope (line 17)
+app/test/api/test_user.py:68: [W0621(redefined-outer-name), test_get_user_not_found] Redefining name 'mock_db_session' from outer scope (line 17)
+app/test/api/test_user.py:79: [W0621(redefined-outer-name), test_update_user_success] Redefining name 'mock_db_session' from outer scope (line 17)
+app/test/api/test_user.py:91: [W0621(redefined-outer-name), test_update_user_not_found] Redefining name 'mock_db_session' from outer scope (line 17)
+app/test/api/test_user.py:102: [W0621(redefined-outer-name), test_delete_user_success] Redefining name 'mock_db_session' from outer scope (line 17)
+app/test/api/test_user.py:116: [W0621(redefined-outer-name), test_delete_user_not_found] Redefining name 'mock_db_session' from outer scope (line 17)
+app/test/api/test_user.py:5: [C0411(wrong-import-order), ] standard import "unittest.mock.patch" should be placed before third party imports "pytest", "fastapi.testclient.TestClient", "sqlalchemy.exc.IntegrityError"
+app/test/api/test_user.py:4: [W0611(unused-import), ] Unused IntegrityError imported from sqlalchemy.exc
+app/test/api/test_user.py:6: [W0611(unused-import), ] Unused router imported from app.api.routes.user
+app/test/api/test_user.py:8: [W0611(unused-import), ] Unused get_db imported from app.core.db
+app/test/api/test_user.py:9: [W0611(unused-import), ] Unused settings imported from app.core.config
+************* Module app.core.base
+app/core/base.py:11: [R0903(too-few-public-methods), Base] Too few public methods (0/2)
+************* Module app.core.models
+app/core/models.py:78: [C0301(line-too-long), ] Line too long (101/100)
+app/core/models.py:43: [R0903(too-few-public-methods), KofiTransactionSchema.Config] Too few public methods (0/2)
+app/core/models.py:48: [R0903(too-few-public-methods), KofiTransaction] Too few public methods (0/2)
+app/core/models.py:81: [R0903(too-few-public-methods), KofiUserSchema.Config] Too few public methods (0/2)
+app/core/models.py:86: [R0903(too-few-public-methods), KofiUser] Too few public methods (0/2)
+app/core/models.py:9: [W0611(unused-import), ] Unused Self imported from typing
+app/core/models.py:10: [W0611(unused-import), ] Unused model_validator imported from pydantic
+************* Module app.core.config
+app/core/config.py:45: [C0303(trailing-whitespace), ] Trailing whitespace
+app/core/config.py:84: [C0103(invalid-name), Settings._enforce_non_default_secrets] Attribute name "DATA_RETENTION_DAYS" doesn't conform to snake_case naming style
+************* Module app.core.utils
+app/core/utils.py:44: [C0301(line-too-long), ] Line too long (102/100)
+app/core/utils.py:58: [C0304(missing-final-newline), ] Final newline missing
+************* Module app.core.db
+app/core/db.py:145: [C0303(trailing-whitespace), ] Trailing whitespace
+app/core/db.py:147: [C0303(trailing-whitespace), ] Trailing whitespace
+app/core/db.py:150: [C0303(trailing-whitespace), ] Trailing whitespace
+app/core/db.py:165: [C0301(line-too-long), ] Line too long (102/100)
+app/core/db.py:174: [C0301(line-too-long), ] Line too long (112/100)
+app/core/db.py:92: [R0914(too-many-locals), handle_database_import] Too many local variables (23/15)
+app/core/db.py:151: [R1728(consider-using-generator), handle_database_import] Consider using a generator instead 'tuple(row[key] for key in primary_keys)'
+app/core/db.py:157: [R1728(consider-using-generator), handle_database_import] Consider using a generator instead 'tuple(row[key] for key in primary_keys)'
+app/core/db.py:128: [R1702(too-many-nested-blocks), handle_database_import] Too many nested blocks (7/5)
+app/core/db.py:128: [R1702(too-many-nested-blocks), handle_database_import] Too many nested blocks (7/5)
+app/core/db.py:212: [C0103(invalid-name), export_db] Variable name "ENGINE_DB_PATH" doesn't conform to snake_case naming style
+app/core/db.py:233: [R1721(unnecessary-comprehension), export_db] Unnecessary use of a comprehension, use list(result.keys()) instead.
+app/core/db.py:9: [W0611(unused-import), ] Unused e imported from math
+************* Module app.api.routes.kofi
+app/api/routes/kofi.py:49: [C0301(line-too-long), ] Line too long (103/100)
+app/api/routes/kofi.py:151: [C0301(line-too-long), ] Line too long (106/100)
+app/api/routes/kofi.py:155: [C0301(line-too-long), ] Line too long (109/100)
+app/api/routes/kofi.py:124: [R0912(too-many-branches), get_transactions_total] Too many branches (15/12)
+************* Module app.api.routes.user
+app/api/routes/user.py:47: [C0301(line-too-long), ] Line too long (105/100)
+app/api/routes/user.py:83: [C0116(missing-function-docstring), update_user] Missing function or method docstring
+************* Module app.api.routes.db
+app/api/routes/db.py:8: [W0611(unused-import), ] Unused import os
+app/api/routes/db.py:11: [W0611(unused-import), ] Unused Form imported from fastapi
+************* Module app.api.routes.__init__
+app/api/routes/__init__.py:1: [R0801(duplicate-code), ] Similar lines in 2 files
+==app.test.api.test_admin:[13:43]
+==app.test.api.test_kofi:[12:44]
+basic_mock_transaction = KofiTransaction(
+    verification_token="test_token",
+    message_id="12345",
+    timestamp="2024-09-25T12:34:56",
+    type="Donation",
+    is_public=True,
+    from_name="John Doe",
+    message="Great work!",
+    amount="5.00",
+    url="https://ko-fi.com/some-url",
+    email="john.doe@example.com",
+    currency="USD",
+    is_subscription_payment=False,
+    is_first_subscription_payment=False,
+    kofi_transaction_id="txn_123",
+    shop_items=None,
+    tier_name=None,
+    shipping=None
+)
+
+basic_mock_user = KofiUser(
+    verification_token="test_token",
+    data_retention_days=30,
+    latest_request_at="2024-09-25T12:34:56",
+    prefered_currency="USD"
+)
+
+# --------------- Test Webhook Endpoint ---------------
+
+
+def test_webhook_transaction_success(mock_db_session):
+    """Test receiving a valid Ko-fi transaction through the webhook."""
+app/api/routes/__init__.py:1: [R0801(duplicate-code), ] Similar lines in 2 files
+==app.test.api.test_kofi:[23:32]
+==app.test.core.test_models:[101:111]
+        currency="USD",
+        is_subscription_payment=False,
+        is_first_subscription_payment=False,
+        kofi_transaction_id="txn_123",
+        shop_items=None,  # Pickled list
+        tier_name=None,
+        shipping=None  # Pickled dict
+    )
+
+    # Assert values are correctly mapped
+app/api/routes/__init__.py:1: [R0801(duplicate-code), ] Similar lines in 2 files
+==app.test.api.test_kofi:[44:51]
+==app.test.core.test_models:[13:20]
+    transaction_data = {
+        "verification_token": "test_token",
+        "message_id": "12345",
+        "timestamp": "2024-09-25T12:34:56",
+        "type": "Donation",
+        "is_public": True,
+        "from_name": "John Doe",
+app/api/routes/__init__.py:1: [R0801(duplicate-code), ] Similar lines in 2 files
+==app.test.api.test_kofi:[13:19]
+==app.test.core.test_models:[91:97]
+    verification_token="test_token",
+    message_id="12345",
+    timestamp="2024-09-25T12:34:56",
+    type="Donation",
+    is_public=True,
+    from_name="John Doe",
+
+-----------------------------------
+Your code has been rated at 8.33/10
+

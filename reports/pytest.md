@@ -1,0 +1,13 @@
+|           filepath           | $$\textcolor{#23d18b}{\tt{passed}}$$ | SUBTOTAL |
+| ---------------------------- | --------------------------------: | -------: |
+| $$\textcolor{#23d18b}{\tt{app/test/api/test\\_admin.py}}$$ |   $$\textcolor{#23d18b}{\tt{4}}$$ | $$\textcolor{#23d18b}{\tt{4}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/api/test\\_db.py}}$$ |   $$\textcolor{#23d18b}{\tt{5}}$$ | $$\textcolor{#23d18b}{\tt{5}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/api/test\\_kofi.py}}$$ |  $$\textcolor{#23d18b}{\tt{10}}$$ | $$\textcolor{#23d18b}{\tt{10}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/api/test\\_user.py}}$$ |   $$\textcolor{#23d18b}{\tt{8}}$$ | $$\textcolor{#23d18b}{\tt{8}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/core/test\\_base.py}}$$ |   $$\textcolor{#23d18b}{\tt{1}}$$ | $$\textcolor{#23d18b}{\tt{1}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/core/test\\_bd.py}}$$ |   $$\textcolor{#23d18b}{\tt{1}}$$ | $$\textcolor{#23d18b}{\tt{1}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/core/test\\_config.py}}$$ |   $$\textcolor{#23d18b}{\tt{5}}$$ | $$\textcolor{#23d18b}{\tt{5}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/core/test\\_models.py}}$$ |   $$\textcolor{#23d18b}{\tt{6}}$$ | $$\textcolor{#23d18b}{\tt{6}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/core/test\\_utils.py}}$$ |   $$\textcolor{#23d18b}{\tt{4}}$$ | $$\textcolor{#23d18b}{\tt{4}}$$ |
+| $$\textcolor{#23d18b}{\tt{app/test/test\\_main.py}}$$ |   $$\textcolor{#23d18b}{\tt{3}}$$ | $$\textcolor{#23d18b}{\tt{3}}$$ |
+| $$\textcolor{#23d18b}{\tt{TOTAL}}$$ |  $$\textcolor{#23d18b}{\tt{47}}$$ | $$\textcolor{#23d18b}{\tt{47}}$$ |
