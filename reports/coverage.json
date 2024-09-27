@@ -2,12 +2,12 @@
     "meta": {
         "format": 3,
         "version": "7.6.1",
-        "timestamp": "2024-09-26T18:30:44.450952",
+        "timestamp": "2024-09-26T19:34:12.548298",
         "branch_coverage": false,
         "show_contexts": false
     },
     "files": {
-        "__init__.py": {
+        "app\\__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -52,7 +52,7 @@
                 }
             }
         },
-        "api\\__init__.py": {
+        "app\\api\\__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -97,7 +97,7 @@
                 }
             }
         },
-        "api\\router.py": {
+        "app\\api\\router.py": {
             "executed_lines": [
                 1,
                 8,
@@ -167,7 +167,7 @@
                 }
             }
         },
-        "api\\routes\\__init__.py": {
+        "app\\api\\routes\\__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -212,7 +212,7 @@
                 }
             }
         },
-        "api\\routes\\admin.py": {
+        "app\\api\\routes\\admin.py": {
             "executed_lines": [
                 1,
                 8,
@@ -340,7 +340,7 @@
                 }
             }
         },
-        "api\\routes\\db.py": {
+        "app\\api\\routes\\db.py": {
             "executed_lines": [
                 1,
                 8,
@@ -549,7 +549,7 @@
                 }
             }
         },
-        "api\\routes\\kofi.py": {
+        "app\\api\\routes\\kofi.py": {
             "executed_lines": [
                 1,
                 9,
@@ -949,7 +949,7 @@
                 }
             }
         },
-        "api\\routes\\user.py": {
+        "app\\api\\routes\\user.py": {
             "executed_lines": [
                 1,
                 8,
@@ -1226,7 +1226,7 @@
                 }
             }
         },
-        "core\\__init__.py": {
+        "app\\core\\__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -1271,7 +1271,7 @@
                 }
             }
         },
-        "core\\base.py": {
+        "app\\core\\base.py": {
             "executed_lines": [
                 1,
                 8,
@@ -1342,7 +1342,7 @@
                 }
             }
         },
-        "core\\config.py": {
+        "app\\core\\config.py": {
             "executed_lines": [
                 1,
                 8,
@@ -1352,6 +1352,7 @@
                 12,
                 15,
                 16,
+                38,
                 46,
                 47,
                 48,
@@ -1362,26 +1363,30 @@
                 65,
                 69,
                 70,
+                72,
                 74,
                 75,
                 83,
-                85,
-                88,
-                90,
-                91
+                84,
+                87,
+                89,
+                92,
+                94,
+                95
             ],
             "summary": {
-                "covered_lines": 23,
-                "num_statements": 26,
-                "percent_covered": 88.46153846153847,
-                "percent_covered_display": "88",
-                "missing_lines": 3,
+                "covered_lines": 27,
+                "num_statements": 31,
+                "percent_covered": 87.09677419354838,
+                "percent_covered_display": "87",
+                "missing_lines": 4,
                 "excluded_lines": 0
             },
             "missing_lines": [
-                72,
-                92,
-                97
+                85,
+                86,
+                96,
+                101
             ],
             "excluded_lines": [],
             "functions": {
@@ -1390,35 +1395,39 @@
                         64,
                         65,
                         69,
-                        70
-                    ],
-                    "summary": {
-                        "covered_lines": 4,
-                        "num_statements": 5,
-                        "percent_covered": 80.0,
-                        "percent_covered_display": "80",
-                        "missing_lines": 1,
-                        "excluded_lines": 0
-                    },
-                    "missing_lines": [
+                        70,
                         72
                     ],
-                    "excluded_lines": []
-                },
-                "Settings._enforce_non_default_secrets": {
-                    "executed_lines": [
-                        83,
-                        85
-                    ],
                     "summary": {
-                        "covered_lines": 2,
-                        "num_statements": 2,
+                        "covered_lines": 5,
+                        "num_statements": 5,
                         "percent_covered": 100.0,
                         "percent_covered_display": "100",
                         "missing_lines": 0,
                         "excluded_lines": 0
                     },
                     "missing_lines": [],
+                    "excluded_lines": []
+                },
+                "Settings._enforce_non_default_secrets": {
+                    "executed_lines": [
+                        83,
+                        84,
+                        87,
+                        89
+                    ],
+                    "summary": {
+                        "covered_lines": 4,
+                        "num_statements": 6,
+                        "percent_covered": 66.66666666666667,
+                        "percent_covered_display": "67",
+                        "missing_lines": 2,
+                        "excluded_lines": 0
+                    },
+                    "missing_lines": [
+                        85,
+                        86
+                    ],
                     "excluded_lines": []
                 },
                 "": {
@@ -1431,6 +1440,7 @@
                         12,
                         15,
                         16,
+                        38,
                         46,
                         47,
                         48,
@@ -1439,21 +1449,21 @@
                         52,
                         74,
                         75,
-                        88,
-                        90,
-                        91
+                        92,
+                        94,
+                        95
                     ],
                     "summary": {
-                        "covered_lines": 17,
-                        "num_statements": 19,
-                        "percent_covered": 89.47368421052632,
-                        "percent_covered_display": "89",
+                        "covered_lines": 18,
+                        "num_statements": 20,
+                        "percent_covered": 90.0,
+                        "percent_covered_display": "90",
                         "missing_lines": 2,
                         "excluded_lines": 0
                     },
                     "missing_lines": [
-                        92,
-                        97
+                        96,
+                        101
                     ],
                     "excluded_lines": []
                 }
@@ -1465,19 +1475,23 @@
                         65,
                         69,
                         70,
+                        72,
                         83,
-                        85
+                        84,
+                        87,
+                        89
                     ],
                     "summary": {
-                        "covered_lines": 6,
-                        "num_statements": 7,
-                        "percent_covered": 85.71428571428571,
-                        "percent_covered_display": "86",
-                        "missing_lines": 1,
+                        "covered_lines": 9,
+                        "num_statements": 11,
+                        "percent_covered": 81.81818181818181,
+                        "percent_covered_display": "82",
+                        "missing_lines": 2,
                         "excluded_lines": 0
                     },
                     "missing_lines": [
-                        72
+                        85,
+                        86
                     ],
                     "excluded_lines": []
                 },
@@ -1491,6 +1505,7 @@
                         12,
                         15,
                         16,
+                        38,
                         46,
                         47,
                         48,
@@ -1499,27 +1514,27 @@
                         52,
                         74,
                         75,
-                        88,
-                        90,
-                        91
+                        92,
+                        94,
+                        95
                     ],
                     "summary": {
-                        "covered_lines": 17,
-                        "num_statements": 19,
-                        "percent_covered": 89.47368421052632,
-                        "percent_covered_display": "89",
+                        "covered_lines": 18,
+                        "num_statements": 20,
+                        "percent_covered": 90.0,
+                        "percent_covered_display": "90",
                         "missing_lines": 2,
                         "excluded_lines": 0
                     },
                     "missing_lines": [
-                        92,
-                        97
+                        96,
+                        101
                     ],
                     "excluded_lines": []
                 }
             }
         },
-        "core\\db.py": {
+        "app\\core\\db.py": {
             "executed_lines": [
                 1,
                 8,
@@ -1934,7 +1949,7 @@
                 }
             }
         },
-        "core\\models.py": {
+        "app\\core\\models.py": {
             "executed_lines": [
                 1,
                 8,
@@ -2259,7 +2274,7 @@
                 }
             }
         },
-        "core\\utils.py": {
+        "app\\core\\utils.py": {
             "executed_lines": [
                 1,
                 8,
@@ -2399,7 +2414,7 @@
                 }
             }
         },
-        "main.py": {
+        "app\\main.py": {
             "executed_lines": [
                 1,
                 8,
@@ -2577,7 +2592,7 @@
                 }
             }
         },
-        "test\\__init__.py": {
+        "app\\test\\__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -2622,7 +2637,7 @@
                 }
             }
         },
-        "test\\api\\__init__.py": {
+        "app\\test\\api\\__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -2667,7 +2682,7 @@
                 }
             }
         },
-        "test\\api\\test_admin.py": {
+        "app\\test\\api\\test_admin.py": {
             "executed_lines": [
                 1,
                 2,
@@ -2891,7 +2906,7 @@
                 }
             }
         },
-        "test\\api\\test_db.py": {
+        "app\\test\\api\\test_db.py": {
             "executed_lines": [
                 1,
                 2,
@@ -3189,7 +3204,7 @@
                 }
             }
         },
-        "test\\api\\test_kofi.py": {
+        "app\\test\\api\\test_kofi.py": {
             "executed_lines": [
                 1,
                 2,
@@ -3606,7 +3621,7 @@
                 }
             }
         },
-        "test\\api\\test_user.py": {
+        "app\\test\\api\\test_user.py": {
             "executed_lines": [
                 1,
                 2,
@@ -3988,7 +4003,7 @@
                 }
             }
         },
-        "test\\conftest.py": {
+        "app\\test\\conftest.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4103,7 +4118,7 @@
                 }
             }
         },
-        "test\\core\\__init__.py": {
+        "app\\test\\core\\__init__.py": {
             "executed_lines": [
                 0
             ],
@@ -4148,7 +4163,7 @@
                 }
             }
         },
-        "test\\core\\test_base.py": {
+        "app\\test\\core\\test_base.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4314,7 +4329,7 @@
                 }
             }
         },
-        "test\\core\\test_bd.py": {
+        "app\\test\\core\\test_bd.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4425,7 +4440,7 @@
                 }
             }
         },
-        "test\\core\\test_config.py": {
+        "app\\test\\core\\test_config.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4443,6 +4458,11 @@
                 22,
                 29,
                 31,
+                33,
+                34,
+                35,
+                36,
+                37,
                 41,
                 43,
                 44,
@@ -4452,29 +4472,19 @@
                 54,
                 56,
                 57,
-                64,
-                66
+                61,
+                63,
+                64
             ],
             "summary": {
-                "covered_lines": 26,
-                "num_statements": 36,
-                "percent_covered": 72.22222222222223,
-                "percent_covered_display": "72",
-                "missing_lines": 10,
+                "covered_lines": 32,
+                "num_statements": 32,
+                "percent_covered": 100.0,
+                "percent_covered_display": "100",
+                "missing_lines": 0,
                 "excluded_lines": 0
             },
-            "missing_lines": [
-                33,
-                34,
-                35,
-                36,
-                37,
-                59,
-                60,
-                67,
-                69,
-                70
-            ],
+            "missing_lines": [],
             "excluded_lines": [],
             "functions": {
                 "test_default_settings": {
@@ -4499,23 +4509,22 @@
                 },
                 "test_load_from_env_vars": {
                     "executed_lines": [
-                        31
-                    ],
-                    "summary": {
-                        "covered_lines": 1,
-                        "num_statements": 6,
-                        "percent_covered": 16.666666666666668,
-                        "percent_covered_display": "17",
-                        "missing_lines": 5,
-                        "excluded_lines": 0
-                    },
-                    "missing_lines": [
+                        31,
                         33,
                         34,
                         35,
                         36,
                         37
                     ],
+                    "summary": {
+                        "covered_lines": 6,
+                        "num_statements": 6,
+                        "percent_covered": 100.0,
+                        "percent_covered_display": "100",
+                        "missing_lines": 0,
+                        "excluded_lines": 0
+                    },
+                    "missing_lines": [],
                     "excluded_lines": []
                 },
                 "test_secret_warning_local_env": {
@@ -4544,35 +4553,29 @@
                     ],
                     "summary": {
                         "covered_lines": 2,
-                        "num_statements": 4,
-                        "percent_covered": 50.0,
-                        "percent_covered_display": "50",
-                        "missing_lines": 2,
+                        "num_statements": 2,
+                        "percent_covered": 100.0,
+                        "percent_covered_display": "100",
+                        "missing_lines": 0,
                         "excluded_lines": 0
                     },
-                    "missing_lines": [
-                        59,
-                        60
-                    ],
+                    "missing_lines": [],
                     "excluded_lines": []
                 },
                 "test_secret_success_non_local_env": {
                     "executed_lines": [
-                        66
+                        63,
+                        64
                     ],
                     "summary": {
-                        "covered_lines": 1,
-                        "num_statements": 4,
-                        "percent_covered": 25.0,
-                        "percent_covered_display": "25",
-                        "missing_lines": 3,
+                        "covered_lines": 2,
+                        "num_statements": 2,
+                        "percent_covered": 100.0,
+                        "percent_covered_display": "100",
+                        "missing_lines": 0,
                         "excluded_lines": 0
                     },
-                    "missing_lines": [
-                        67,
-                        69,
-                        70
-                    ],
+                    "missing_lines": [],
                     "excluded_lines": []
                 },
                 "": {
@@ -4588,7 +4591,7 @@
                         29,
                         41,
                         54,
-                        64
+                        61
                     ],
                     "summary": {
                         "covered_lines": 11,
@@ -4621,6 +4624,11 @@
                         22,
                         29,
                         31,
+                        33,
+                        34,
+                        35,
+                        36,
+                        37,
                         41,
                         43,
                         44,
@@ -4630,34 +4638,24 @@
                         54,
                         56,
                         57,
-                        64,
-                        66
+                        61,
+                        63,
+                        64
                     ],
                     "summary": {
-                        "covered_lines": 26,
-                        "num_statements": 36,
-                        "percent_covered": 72.22222222222223,
-                        "percent_covered_display": "72",
-                        "missing_lines": 10,
+                        "covered_lines": 32,
+                        "num_statements": 32,
+                        "percent_covered": 100.0,
+                        "percent_covered_display": "100",
+                        "missing_lines": 0,
                         "excluded_lines": 0
                     },
-                    "missing_lines": [
-                        33,
-                        34,
-                        35,
-                        36,
-                        37,
-                        59,
-                        60,
-                        67,
-                        69,
-                        70
-                    ],
+                    "missing_lines": [],
                     "excluded_lines": []
                 }
             }
         },
-        "test\\core\\test_models.py": {
+        "app\\test\\core\\test_models.py": {
             "executed_lines": [
                 1,
                 2,
@@ -4913,7 +4911,7 @@
                 }
             }
         },
-        "test\\core\\test_utils.py": {
+        "app\\test\\core\\test_utils.py": {
             "executed_lines": [
                 1,
                 2,
@@ -5159,7 +5157,7 @@
                 }
             }
         },
-        "test\\test_main.py": {
+        "app\\test\\test_main.py": {
             "executed_lines": [
                 1,
                 2,
@@ -5344,11 +5342,11 @@
         }
     },
     "totals": {
-        "covered_lines": 778,
-        "num_statements": 895,
-        "percent_covered": 86.92737430167598,
-        "percent_covered_display": "87",
-        "missing_lines": 117,
+        "covered_lines": 788,
+        "num_statements": 896,
+        "percent_covered": 87.94642857142857,
+        "percent_covered_display": "88",
+        "missing_lines": 108,
         "excluded_lines": 0
     }
 }

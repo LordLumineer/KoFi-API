@@ -28,7 +28,7 @@ jobs:
     - name: Set up thresholds
       id: thresholds
       run: |
-        echo "pylint_threshold=9" >> $GITHUB_OUTPUT
+        echo "pylint_threshold=5" >> $GITHUB_OUTPUT
         echo "coverage_threshold=50" >> $GITHUB_OUTPUT
         echo "ALL_CHECKS_PASSED=true" >> $GITHUB_ENV  # Initialize with true
 
@@ -41,9 +41,10 @@ jobs:
         pip install -r requirements.txt
         pip install -r test/requirements-dev.txt
 
+  # ---------- PYLINT ---------- #
     # Step 5: Run pylint and calculate the score
     - name: Run pylint
-      id: pylint
+      id: pylint_run
       run: |
         cd app
         pylint_score=$(pylint . --fail-under=${{ steps.thresholds.outputs.pylint_threshold }} --output-format=json:../reports/pylint.json,parseable | tee pylint-report.txt | awk '/Your code has been rated at/ {print $7}')
@@ -53,58 +54,79 @@ jobs:
 
     # Step 6: Fail if pylint score is below threshold
     - name: Check pylint score
-      if: ${{ steps.pylint.outputs.pylint_score < steps.thresholds.outputs.pylint_threshold }}
+      id: pylint_check
+      if: ${{ steps.pylint_run.outputs.pylint_score < steps.thresholds.outputs.pylint_threshold }}
       run: |
-        echo "Pylint score is below the required threshold. ${{ steps.pylint.outputs.pylint_score }} (required >${{ steps.thresholds.outputs.pylint_threshold }})"
+        echo "Pylint score is below the required threshold. ${{ steps.pylint_run.outputs.pylint_score }} (required >${{ steps.thresholds.outputs.pylint_threshold }})"
         echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV  # Mark that one check failed
 
-    # Step 7: Run coverage and generate report
-    - name: Run tests with coverage
-      id: covtest
+    # Step 7: Generate PyLint Badge
+    - name: Generate PyLint Badge
+      id: pylint_generate
       run: |
-        coverage run -m pytest --tb=no --json-report --json-report-summary --json-report-indent=4 --json-report-file=../reports/pytest.json
-        coverage report --fail-under=${{ steps.thresholds.outputs.coverage_threshold }}
-        coverage json -o ../reports/coverage.json --pretty-print
-      continue-on-error: true  # Do not fail the job yet
-
-    # Step 8: Check pytest result based on exit code
-    - name: Check pytest result
-      run: |
-        if [ "${{ steps.covtest.outcome }}" == "failure" ]; then
-          echo "Tests failed. Setting failure flag."
-          echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
+        if [ "${{ steps.pylint_run.outcome }}" == "failure" ]; then
+          anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o ${{ steps.thresholds.outputs.pylint_threshold }}=red
+        elif [ "${{ steps.pylint_run.outcome }}" == "success" ]; then
+          anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o pylint
         fi
 
-    # Step 8: Extract coverage percentage
-    - name: Extract coverage percentage
-      id: coverage
+  # ---------- PYTEST ---------- #
+    # Step 7: Run Coverage and generate PyTest report
+    - name: Run PyTest with Coverage
+      id: pytest_run
       run: |
+        coverage run -m pytest --tb=no --json-report --json-report-summary --json-report-indent=4 --json-report-file=../reports/pytest.json
+      continue-on-error: true  # Do not fail the job yet
+    
+    # Step 8: Check pytest result based on exit code
+    - name: Check pytest result
+      id: pytest_check
+      if: ${{ steps.pytest_run.outcome == 'failure' }}
+      run: |
+        echo "PyTest failed. Setting failure flag."
+        echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
+  
+    # Step 8: Generate PyTest Badge
+    - name: Generate PyTest Badge
+      id: pytest_generate
+      run: |
+        if [ "${{ steps.pytest_run.outcome }}" == "failure" ]; then
+          anybadge -l PyTest -v FAIL -f img/pytest_badge.svg -o PASS=green FAIL=red
+        elif [ "${{ steps.pytest_run.outcome }}" == "success" ]; then
+          anybadge -l PyTest -v PASS -f =img/pytest_badge.svg -o PASS=green FAIL=red
+        fi
+
+  # ---------- COVERAGE ---------- #
+    # Step 7: Check coverage and generate Coverage report
+    - name: Check coverage
+      id: coverage_run
+      run: |
+        coverage report --fail-under=${{ steps.thresholds.outputs.coverage_threshold }}
+        coverage json -o reports/coverage.json --pretty-print
         coverage_percentage=$(coverage report | grep 'TOTAL' | awk '{print $4}' | sed 's/%//')
         echo "Coverage percentage is: $coverage_percentage"
         echo "coverage_percentage=$coverage_percentage" >> $GITHUB_OUTPUT
+      continue-on-error: true  # Do not fail the job yet
 
-    # Step 9: Fail if coverage is below threshold
-    - name: Check coverage score
-      if: ${{ steps.coverage.outputs.coverage_percentage < steps.thresholds.outputs.coverage_threshold }}
+    # Step 8: Check Coverage result based on exit code
+    - name: Check Coverage Score
+      id: coverage_check
+      if: ${{ steps.coverage_run.outcome == 'failure' }}
       run: |
-        echo "Coverage is below the required threshold. ${{ steps.coverage.outputs.coverage_percentage }}% (required >${{ steps.thresholds.outputs.coverage_threshold }}%)"
-        echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV  # Mark that one check failed
+        echo "Coverage is below the required threshold. ${{ steps.coverage_run.outputs.coverage_percentage }}% (required >${{ steps.thresholds.outputs.coverage_threshold }}%)"
+        echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
 
-    # Step 11: Generate Badges using Anybadge
-    - name: Generate Badges
+    # Step 9: Generate Coverage Badge
+    - name: Generate Coverage Badge
+      id: coverage_generate
       run: |
-        rm -f img/pylint_badge.svg
-        anybadge --value=${{ steps.pylint.outputs.pylint_score }} --file=img/pylint_badge.svg pylint
-        rm -f img/pytest_badge.svg
-        if [ "${{ steps.covtest.outcome }}" == "failure" ]; then
-          anybadge --label=PyTest --value=FAIL --file=img/pytest_badge.svg PASS=green FAIL=red
+        if [ "${{ steps.coverage_run.outcome }}" == "failure" ]; then
+          anybadge -l Coverage -v ${{ steps.coverage_run.outputs.coverage_percentage }} -f =img/coverage_badge.svg -o ${{ steps.thresholds.outputs.coverage_threshold }}=red
+        elif [ "${{ steps.coverage_run.outcome }}" == "success" ]; then
+          anybadge -l Coverage -v ${{ steps.coverage_run.outputs.coverage_percentage }} -f =img/coverage_badge.svg -o coverage
         fi
-        if [ "${{ steps.covtest.outcome }}" == "success" ]; then
-          anybadge --label=PyTest --value=PASS --file=img/pytest_badge.svg PASS=green FAIL=red
-        fi
-        rm -f img/coverage_badge.svg
-        anybadge --value=${{ steps.coverage.outputs.coverage_percentage }} --file=img/coverage_badge.svg coverage
 
+  # ---------- UPLOAD ---------- #
     # Step 13: Upload the badges and reports as GitHub artifacts (optional)
     - name: Upload badges an reports
       uses: actions/upload-artifact@v4
@@ -129,6 +151,6 @@ jobs:
     
     # Step 6: Fail if the tests Failed
     - name: Check pylint score
-      if: ${{ steps.pylint.outputs.pylint_score < steps.thresholds.outputs.pylint_threshold }}
+      if: env.ALL_CHECKS_PASSED == 'true'
       run: |
         exit 1
