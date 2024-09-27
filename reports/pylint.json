@@ -1920,7 +1920,7 @@
         "endColumn": null,
         "path": "api/routes/__init__.py",
         "symbol": "duplicate-code",
-        "message": "Similar lines in 2 files\n==app.test.api.test_kofi:[23:32]\n==app.test.core.test_models:[101:111]\n        currency=\"USD\",\n        is_subscription_payment=False,\n        is_first_subscription_payment=False,\n        kofi_transaction_id=\"txn_123\",\n        shop_items=None,  # Pickled list\n        tier_name=None,\n        shipping=None  # Pickled dict\n    )\n\n    # Assert values are correctly mapped",
+        "message": "Similar lines in 2 files\n==app.test.api.test_kofi:[23:32]\n==app.test.core.test_models:[101:111]\n    currency=\"USD\",\n    is_subscription_payment=False,\n    is_first_subscription_payment=False,\n    kofi_transaction_id=\"txn_123\",\n    shop_items=None,\n    tier_name=None,\n    shipping=None\n)\n",
         "message-id": "R0801"
     },
     {
