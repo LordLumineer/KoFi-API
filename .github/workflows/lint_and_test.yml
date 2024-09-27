@@ -65,7 +65,7 @@ jobs:
       id: pylint_generate
       run: |
         if [ "${{ steps.pylint_run.outcome }}" == "failure" ]; then
-          anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o ${{ steps.thresholds.outputs.pylint_threshold }}=red
+          anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o -c red
         elif [ "${{ steps.pylint_run.outcome }}" == "success" ]; then
           anybadge -l PyLint -v ${{ steps.pylint_run.outputs.pylint_score }} -f img/pylint_badge.svg -o pylint
         fi
@@ -91,9 +91,9 @@ jobs:
       id: pytest_generate
       run: |
         if [ "${{ steps.pytest_run.outcome }}" == "failure" ]; then
-          anybadge -l PyTest -v FAIL -f img/pytest_badge.svg -o PASS=green FAIL=red
+          anybadge -l PyTest -v FAIL -f img/pytest_badge.svg -o -c red
         elif [ "${{ steps.pytest_run.outcome }}" == "success" ]; then
-          anybadge -l PyTest -v PASS -f img/pytest_badge.svg -o PASS=green FAIL=red
+          anybadge -l PyTest -v PASS -f img/pytest_badge.svg -o -c green
         fi
 
   # ---------- COVERAGE ---------- #
