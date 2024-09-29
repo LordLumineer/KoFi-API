@@ -44,10 +44,11 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="""Ko-fi Donation API is a FastAPI-based system that allows users to manage
-    Ko-fi donations, users, and transactions. It provides a set of API endpoints for handling
-    donations, exporting and importing the database, and admin-specific operations like
-    managing users and transactions.""",
+    description="""
+    Ko-fi Donation API is a FastAPI-based system that allows users to store and access Ko-fi transactions. 
+    It provides a set of API endpoints for handling donations, exporting and importing the database, 
+    and admin-specific operations like managing users and transactions.
+    """,
     version="1.0.0",
     generate_unique_id_function=custom_generate_unique_id,
     lifespan=lifespan,

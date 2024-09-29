@@ -44,6 +44,6 @@ jobs:
     # Step 5: Push Docker image to Docker Hub
     - name: Push Docker image to Docker Hub
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}  # Push commit SHA tag
-        docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest  # Push latest tag
-        docker push ${{ secrets.DOCKER_USERNAME }}/myapp:${{steps.version.outputs.version}}  # Push version tag
+        docker push ${{ secrets.DOCKER_USERNAME }}/kofi-api:${{ github.sha }}  # Push commit SHA tag
+        docker push ${{ secrets.DOCKER_USERNAME }}/kofi-api:latest  # Push latest tag
+        docker push ${{ secrets.DOCKER_USERNAME }}/kofi-api:${{steps.version.outputs.version}}  # Push version tag

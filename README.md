@@ -12,7 +12,7 @@ An API to store and access Ko-fi donations
 
 ## About Ko-fi API
 
-Ko-fi Donation API is a FastAPI-based system that allows users to manage Ko-fi donations, users, and transactions. It provides a set of API endpoints for handling donations, exporting and importing the database, and admin-specific operations like managing users and transactions.
+Ko-fi Donation API is a FastAPI-based system that allows users to store and access Ko-fi transactions. It provides a set of API endpoints for handling donations, exporting and importing the database, and admin-specific operations like managing users and transactions.
 
 ## Table of Contents
 
