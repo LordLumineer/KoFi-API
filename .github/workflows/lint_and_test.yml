@@ -154,9 +154,6 @@ jobs:
         echo "The current version is not greater than the previous version. ${{ steps.api_version.outputs.NEW_API_VERSION }} > ${{ steps.api_version.outputs.LIVE_API_VERSION }}"
         echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
         exit 1
-    
-    - name: FAIL
-      run: exit 1
 
   # ---------- UPLOAD ---------- #
     # Step 14: Upload the badges and reports as GitHub artifacts (optional)
