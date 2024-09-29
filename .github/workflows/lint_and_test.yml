@@ -137,7 +137,8 @@ jobs:
         NEW_API_VERSION=$(grep -oP "version=\"\K[0-9.]+" app/main.py || echo "0.0.0")
         LIVE_API_VERSION=$(git show origin/master:app/main.py | grep -oP "version=\"\K[0-9.]+" app/main.py || echo "0.0.0")
         echo "NEW_API_VERSION=$NEW_API_VERSION" >> $GITHUB_OUTPUT
-        echo "LIVE_API_VERSION=$API_VERSION" >> $GITHUB_OUTPUT
+        echo "LIVE_API_VERSION=0.0.1" >> $GITHUB_OUTPUT
+      #  echo "LIVE_API_VERSION=$LIVE_API_VERSION" >> $GITHUB_OUTPUT
 
     - name: Compare Versions
       id: compare_versions
@@ -153,6 +154,10 @@ jobs:
       run: |
         echo "The current version is not greater than the previous version. ${{ steps.api_version.outputs.NEW_API_VERSION }} > ${{ steps.api_version.outputs.LIVE_API_VERSION }}"
         echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
+        exit 1
+    
+    - name: FAIL
+      run: exit 1
 
   # ---------- UPLOAD ---------- #
     # Step 14: Upload the badges and reports as GitHub artifacts (optional)
