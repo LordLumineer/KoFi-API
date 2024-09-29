@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  kofi-api:
+    build: .
+    container_name: kofi-api
+    ports:
+      - "8000:8000"
+    environment:
+      # - ENVIRONMENT=production
+      # - DATABASE_URL=sqlite:///./KoFi.db  # Use your actual DB URL in production
+      - ADMIN_SECRET_KEY=your_admin_secret_key
+      # - DATA_RETENTION_DAYS=10
+    # volumes:
+    #   - ./data:/app/data  # Map local folder for persistent storage
+    restart: unless-stopped

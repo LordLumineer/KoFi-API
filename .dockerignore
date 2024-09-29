@@ -1,0 +1,31 @@
+# Python cache and bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Logs and database files
+*.log
+*.sqlite
+*.db
+
+# Git files
+.git
+.gitignore
+
+# Docker-related files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Environment files
+.env
+
+# Pytest cache
+.pytest_cache/
+
+# Test Folder
+app/test/
