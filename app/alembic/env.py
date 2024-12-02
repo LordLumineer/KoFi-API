@@ -7,6 +7,7 @@ from alembic import context
 
 from app.core.config import settings
 from app.core.base import Base
+from app.core.models import KofiTransaction  # pylint: disable=W0611
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

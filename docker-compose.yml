@@ -22,7 +22,7 @@ services:
         condition: service_healthy
 
   db:
-    container_name: postgres
+    container_name: kofi-postgres
     image: postgres
     restart: unless-stopped
     # set shared memory limit when using docker-compose
@@ -42,7 +42,7 @@ services:
       retries: 30
 
   adminer:
-    container_name: adminer
+    container_name: kofi-adminer
     image: adminer
     restart: unless-stopped
     ports:

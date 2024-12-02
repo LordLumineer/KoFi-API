@@ -10,6 +10,10 @@ __pycache__/
 *.db
 *.sqlite3
 
+# Development
+dev-docker-compose.yml
+.dev-test-deploy/
+
 # Distribution / packaging
 .Python
 build/
