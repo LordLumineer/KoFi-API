@@ -25,6 +25,8 @@ Ko-fi Donation API is a FastAPI-based system that allows users to store and acce
   - [Installation](#installation)
   - [Configuration](#configuration)
   - [Running the Application](#running-the-application)
+  - [Deploying the Application](#deploying-the-application)
+    - [Docker](#docker)
   - [API Endpoints](#api-endpoints)
     - [Ko-fi Webhook Endpoints](#ko-fi-webhook-endpoints)
     - [User Management Endpoints](#user-management-endpoints)
@@ -113,6 +115,75 @@ fastapi run main.py
 ```
 
 The API will be accessible at <http://127.0.0.1:8000>, and the documentation will be available at <http://127.0.0.1:8000/docs> or <http://127.0.0.1:8000/redoc> (Swagger UI/ReDoc).
+
+## Deploying the Application
+
+### Docker
+
+You can deploy the application using Docker.
+
+It is recommended to use Docker Compose to manage the application.
+
+If you want to run without defining a separate database you can just deploy the kofi-api service without the db and adminer (optional in all cases) services.
+
+For production it is **IMPORTANT** to define the ADMIN_SECRET_KEY as it is used to perform admin operations (import / export database).
+
+```yml
+version: "3.8"
+
+# version: "3.8"
+
+services:
+  kofi-api:
+    container_name: kofi-api
+    image: lordlumineer/kofi-api:latest
+    restart: unless-stopped
+    # build: .
+
+    ports:
+      - 8080:8000
+    # environment:
+    #   - ENVIRONMENT=production
+    #   - DATABASE_URL=postgresql+psycopg2://<POSTGRES_USER>:<POSTGRES_PASSWORD>@db:5432/KoFiAPI
+    #   - ADMIN_SECRET_KEY=<ADMIN_SECRET_KEY>
+    #   - DATA_RETENTION_DAYS=10
+    # volumes:
+    #   - <PATH>:/app/data  # Map local folder for persistent storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    container_name: kofi-postgres
+    image: postgres
+    restart: unless-stopped
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    ports:
+      - 5432:5432
+    # volumes:
+    #   - <PATH>:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: KoFiAPI
+      POSTGRES_USER: <POSTGRES_USER>
+      POSTGRES_PASSWORD: <POSTGRES_PASSWORD>
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U <POSTGRES_USER> -d KoFiAPI"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # Optional
+  adminer:
+    container_name: kofi-adminer
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8181:8080
+    depends_on:
+      db:
+        condition: service_healthy
+```
 
 ## API Endpoints
 

@@ -16,7 +16,7 @@ services:
     #   - ADMIN_SECRET_KEY=<ADMIN_SECRET_KEY>
     #   - DATA_RETENTION_DAYS=10
     # volumes:
-      # - <PATH>:/app/data  # Map local folder for persistent storage
+    #   - <PATH>:/app/data  # Map local folder for persistent storage
     depends_on:
       db:
         condition: service_healthy
@@ -29,8 +29,8 @@ services:
     shm_size: 128mb
     ports:
       - 5432:5432
-    volumes:
-      - <PATH>:/var/lib/postgresql/data
+    # volumes:
+    #   - <PATH>:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: KoFiAPI
       POSTGRES_USER: <POSTGRES_USER>
