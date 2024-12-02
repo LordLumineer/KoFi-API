@@ -45,7 +45,7 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str = Field(default="Ko-fi API")
     DATA_RETENTION_DAYS: str | int = Field(default=30)
-    DATABASE_URL: str = Field(default="sqlite:///./KoFi.db")  # "sqlite:///./KoFi.db"
+    DATABASE_URL: str = Field(default="sqlite:///./data/KoFi.db")  # "sqlite:///./KoFi.db"
     ADMIN_SECRET_KEY: str = Field(default="changethis")  # "123456"  # Set to "changethis"
     ENVIRONMENT: Literal["local", "production"] = Field(default="local")  # "local"
 
