@@ -6,8 +6,7 @@ RUN python -m pip install --upgrade pip
 WORKDIR /app
 
 # Copy only the requirements.txt first to leverage Docker cache
-# COPY app/requirements.txt .
-COPY requirements.txt .
+COPY app/requirements.txt .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
