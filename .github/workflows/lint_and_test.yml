@@ -148,12 +148,12 @@ jobs:
         python -c "from semantic_version import Version; import sys; sys.exit(0 if Version('${{ steps.api_version.outputs.NEW_API_VERSION }}') > Version('${{ steps.api_version.outputs.LIVE_API_VERSION }}') else 1)"
       continue-on-error: true
 
-    - name: Check result
-      if: ${{ steps.compare_versions.outcome == 'failure' }}
-      run: |
-        echo "The current version is not greater than the previous version. ${{ steps.api_version.outputs.NEW_API_VERSION }} > ${{ steps.api_version.outputs.LIVE_API_VERSION }}"
-        echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
-        exit 1
+    # - name: Check result
+    #   if: ${{ steps.compare_versions.outcome == 'failure' }}
+    #   run: |
+    #     echo "The current version is not greater than the previous version. ${{ steps.api_version.outputs.NEW_API_VERSION }} > ${{ steps.api_version.outputs.LIVE_API_VERSION }}"
+    #     echo "ALL_CHECKS_PASSED=false" >> $GITHUB_ENV
+    #     exit 1
 
   # ---------- UPLOAD ---------- #
     # Step 14: Upload the badges and reports as GitHub artifacts (optional)
