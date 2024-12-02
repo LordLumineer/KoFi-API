@@ -1,16 +1,52 @@
-version: "3.8"
+# version: "3.8"
 
 services:
   kofi-api:
-    build: .
     container_name: kofi-api
-    ports:
-      - "8000:8000"
-    environment:
-      # - ENVIRONMENT=production
-      # - DATABASE_URL=sqlite:///./KoFi.db  # Use your actual DB URL in production
-      - ADMIN_SECRET_KEY=your_admin_secret_key
-      # - DATA_RETENTION_DAYS=10
-    # volumes:
-    #   - ./data:/app/data  # Map local folder for persistent storage
+    image: lordlumineer/kofi-api:latest
     restart: unless-stopped
+    # build: .
+
+    ports:
+      - 8080:8000
+    # environment:
+    #   - ENVIRONMENT=production
+    #   - DATABASE_URL=postgresql+psycopg2://<POSTGRES_USER>:<POSTGRES_PASSWORD>@db:5432/KoFiAPI
+    #   - DATABASE_URL=sqlite:///./data/KoFi.db
+    #   - ADMIN_SECRET_KEY=<ADMIN_SECRET_KEY>
+    #   - DATA_RETENTION_DAYS=10
+    # volumes:
+      # - <PATH>:/app/data  # Map local folder for persistent storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    container_name: postgres
+    image: postgres
+    restart: unless-stopped
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    ports:
+      - 5432:5432
+    volumes:
+      - <PATH>:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: KoFiAPI
+      POSTGRES_USER: <POSTGRES_USER>
+      POSTGRES_PASSWORD: <POSTGRES_PASSWORD>
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U <POSTGRES_USER> -d KoFiAPI"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8181:8080
+    depends_on:
+      db:
+        condition: service_healthy

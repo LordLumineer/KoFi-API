@@ -49,7 +49,7 @@ app = FastAPI(
     It provides a set of API endpoints for handling donations, exporting and importing the database, 
     and admin-specific operations like managing users and transactions.
     """,
-    version="1.0.0",
+    version="1.0.1",
     generate_unique_id_function=custom_generate_unique_id,
     lifespan=lifespan,
 )

@@ -12,5 +12,13 @@
     "pylint.cwd": "${workspaceFolder}/app",
     "autopep8.args": [
         "--max-line-length=115"
+    ],
+    "cSpell.words": [
+        "adminer",
+        "healthcheck",
+        "isready",
+        "kofi",
+        "lordlumineer",
+        "psycopg"
     ]
 }
