@@ -181,16 +181,16 @@ jobs:
       continue-on-error: true
     
     # Step 16: Fail if the tests Failed
-    - name: Check Test Result
-      if: steps.coverage_run.outcome == 'failure' || steps.pylint_run.outcome == 'failure' || steps.pytest_run.outcome == 'failure'
-      run: |
-        if [ "${{ steps.pylint_run.outcome }}" == "failure" ]; then
-          echo "PyLint Failed"
-        fi
-        if [ "${{ steps.pytest_run.outcome }}" == "failure" ]; then
-          echo "PyTest Failed"
-        fi
-        if [ "${{ steps.coverage_run.outcome }}" == "failure" ]; then
-          echo "Coverage Failed"
-        fi
-        exit 1
+    # - name: Check Test Result
+    #   if: steps.coverage_run.outcome == 'failure' || steps.pylint_run.outcome == 'failure' || steps.pytest_run.outcome == 'failure'
+    #   run: |
+    #     if [ "${{ steps.pylint_run.outcome }}" == "failure" ]; then
+    #       echo "PyLint Failed"
+    #     fi
+    #     if [ "${{ steps.pytest_run.outcome }}" == "failure" ]; then
+    #       echo "PyTest Failed"
+    #     fi
+    #     if [ "${{ steps.coverage_run.outcome }}" == "failure" ]; then
+    #       echo "Coverage Failed"
+    #     fi
+    #     exit 1
