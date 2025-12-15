@@ -158,7 +158,7 @@ jobs:
   # ---------- UPLOAD ---------- #
     # Step 14: Upload the badges and reports as GitHub artifacts (optional)
     - name: Upload badges an reports
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: pybadge-and-reports
         path: |
